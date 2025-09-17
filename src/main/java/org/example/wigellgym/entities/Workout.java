@@ -26,7 +26,9 @@ public class Workout {
     @JsonIgnoreProperties({"workouts", "speciality"})
     private Instructor instructor;
     @Column(nullable = false)
-    private Integer participants;
+    private Integer maxParticipants;
+    @Column(nullable = false)
+    private Integer freeSpots;
     @Column(nullable = false)
     private Double priceSek;
     @Column(nullable = false)
@@ -79,12 +81,20 @@ public class Workout {
         this.instructor = instructor;
     }
 
-    public Integer getParticipants() {
-        return participants;
+    public Integer getMaxParticipants() {
+        return maxParticipants;
     }
 
-    public void setParticipants(Integer participants) {
-        this.participants = participants;
+    public void setMaxParticipants(Integer maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
+    public Integer getFreeSpots() {
+        return freeSpots;
+    }
+
+    public void setFreeSpots(Integer freeSpots) {
+        this.freeSpots = freeSpots;
     }
 
     public Double getPriceSek() {
@@ -119,7 +129,8 @@ public class Workout {
                 ", typeOfWorkout='" + typeOfWorkout + '\'' +
                 ", location='" + location + '\'' +
                 ", instructor=" + instructor +
-                ", participants=" + participants +
+                ", maxParticipants=" + maxParticipants +
+                ", freeSpots=" + freeSpots +
                 ", priceSek=" + priceSek +
                 ", date=" + date +
                 ", bookings=" + bookings +

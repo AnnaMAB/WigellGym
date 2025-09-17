@@ -38,8 +38,8 @@ public class CustomerController {
     }
 
     @PostMapping("/bookworkout")
-    public ResponseEntity<Booking> bookWorkout(@RequestBody Booking booking) {
-        return ResponseEntity.ok(bookingService.makeBooking(booking));
+    public ResponseEntity<Booking> bookWorkout(@RequestBody Workout workoutToBook) {
+        return ResponseEntity.ok(bookingService.makeBooking(workoutToBook));
     }
 
     @PutMapping("cancelworkout")
