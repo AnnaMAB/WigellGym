@@ -27,45 +27,39 @@ public class AdminController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping("listcanceled")                     //• Lista avbokningar
+    @GetMapping("listcanceled")
     public ResponseEntity<List<Booking>> listCanceledBookings() {
         return ResponseEntity.ok(bookingService.getCanceledBookings());
     }
 
-    @GetMapping("listupcoming")                     //• Lista kommande bokningar
+    @GetMapping("listupcoming")
     public ResponseEntity<List<Booking>> listUpcomingBookings() {
         return ResponseEntity.ok(bookingService.getUpcomingBookings());
     }
 
-    @GetMapping("listpast")                         //• Lista historiska bokningar
+    @GetMapping("listpast")
     public ResponseEntity<List<Booking>> listPastBookings() {
         return ResponseEntity.ok(bookingService.getOldBookings());
     }
 
-    @PostMapping("addworkout")                     //• Lägg till träningspass
+    @PostMapping("addworkout")
     public ResponseEntity<Workout> addWorkout(@RequestBody Workout workout) {
         return ResponseEntity.ok(workoutService.addWorkout(workout));
     }
 
-    @PutMapping("updateworkout")                //• Uppdatera träningspass
+    @PutMapping("updateworkout")
     public ResponseEntity<Workout> updateWorkout(@RequestBody Workout workout) {
         return ResponseEntity.ok(workoutService.updateWorkout(workout));
     }
 
-    @DeleteMapping("remworkout/{id}")               //• Radera träningspass
+    @DeleteMapping("remworkout/{id}")
     public ResponseEntity<String> deleteWorkout(@PathVariable Integer id) {
         workoutService.deleteWorkout(id);
         return ResponseEntity.ok(String.format("Entry with Id: %s has been successfully deleted.", id));
     }
 
-    @PostMapping("addinstructor")               //• Lägg till instruktör
+    @PostMapping("addinstructor")
     public ResponseEntity<Instructor> addInstructor(@RequestBody Instructor instructor) {
         return ResponseEntity.ok(instructorService.addInstructor(instructor));
     }
-
-    @GetMapping("instructors")         //• Lista instruktörer
-    public ResponseEntity<List<Instructor>> listInstructors() {
-        return ResponseEntity.ok(instructorService.getInstructors());
-    }
-
 }

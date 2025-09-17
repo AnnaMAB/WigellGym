@@ -1,0 +1,33 @@
+package org.example.wigellgym.controller;
+
+import org.example.wigellgym.entities.Instructor;
+import org.example.wigellgym.services.BookingServiceImpl;
+import org.example.wigellgym.services.InstructorServiceImpl;
+import org.example.wigellgym.services.WorkoutServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+
+@RestController
+@RequestMapping("/api/wigellgym")
+public class CommonController {
+
+    private final InstructorServiceImpl instructorService;
+
+    @Autowired
+    public CommonController(InstructorServiceImpl instructorService) {
+        this.instructorService = instructorService;
+
+    }
+
+    @GetMapping("/instructors")
+    public ResponseEntity<List<Instructor>> getAllInstructors() {
+        return ResponseEntity.ok(instructorService.getInstructors());
+    }
+
+}

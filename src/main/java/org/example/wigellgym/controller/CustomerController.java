@@ -17,38 +17,32 @@ import java.util.List;
 public class CustomerController {
 
     private final WorkoutServiceImpl workoutService;
-    private final InstructorServiceImpl instructorService;
     private final BookingServiceImpl bookingService;
 
 
     @Autowired
-    public CustomerController(WorkoutServiceImpl workoutService, InstructorServiceImpl instructorService, BookingServiceImpl bookingService) {
+    public CustomerController(WorkoutServiceImpl workoutService, BookingServiceImpl bookingService) {
         this.workoutService = workoutService;
-        this.instructorService = instructorService;
         this.bookingService = bookingService;
     }
 
-    @GetMapping("/workouts")                                            //Lista träningspass
+    @GetMapping("/workouts")
     public ResponseEntity<List<Workout>> getAllWorkouts() {
         return ResponseEntity.ok(workoutService.getAllWorkouts());
     }
 
-    @GetMapping("/instructors")                                            //Lista instruktörer
-    public ResponseEntity<List<Instructor>> getAllInstructors() {
-        return ResponseEntity.ok(instructorService.getInstructors());
-    }
 
-    @GetMapping("/mybookings")                                            //Se tidigare och aktiva bokningar
+    @GetMapping("/mybookings")
     public ResponseEntity<List<Booking>> getCustomerBookings() {
         return ResponseEntity.ok(bookingService.getMyBookings());
     }
 
-    @PostMapping("/bookworkout")                                                //Boka träningspass
+    @PostMapping("/bookworkout")
     public ResponseEntity<Booking> bookWorkout(@RequestBody Booking booking) {
         return ResponseEntity.ok(bookingService.makeBooking(booking));
     }
 
-    @PutMapping("cancelworkout")                                    // Avboka träningspass (fram tills en dag innan avsatt datum)
+    @PutMapping("cancelworkout")
     public ResponseEntity<Booking> cancelBooking(@RequestBody Booking booking) {
         return ResponseEntity.ok(bookingService.cancelBooking(booking));
     }
