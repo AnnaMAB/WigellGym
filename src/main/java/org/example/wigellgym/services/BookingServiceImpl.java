@@ -1,6 +1,8 @@
 package org.example.wigellgym.services;
 
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Workout;
 import org.example.wigellgym.repositories.BookingRepository;
@@ -20,6 +22,7 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final WorkoutRepository workoutRepository;
+    private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository) {
@@ -27,18 +30,19 @@ public class BookingServiceImpl implements BookingService {
         this.workoutRepository = workoutRepository;
     }
 
-    private String getUsername() {
+    private String getAuthUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getName();
     }
 
     @Override
     public List<Booking> getMyBookings() {          //KLAR?
-        return bookingRepository.findAllByCustomerUsername((getUsername()));
+        F_LOG.info("USER retrieved all their bookings");
+        return bookingRepository.findAllByCustomerUsername((getAuthUsername()));
     }
 
     @Transactional
-    @Override                               //TODO----EURO
+    @Override                               //TODO----EURO//TODO-----LOG
     public Booking makeBooking(Workout workoutToBook) {
         Workout workout = workoutRepository.findById(workoutToBook.getId())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -46,32 +50,35 @@ public class BookingServiceImpl implements BookingService {
                         String.format("No workout exists with id: %d.", workoutToBook.getId())
                 ));
         if(workout.getFreeSpots() == 0) {
+            F_LOG.warn("USER tried to book a workout with no free spots");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     String.format("No free spots at the requested workout")
             );
         }
         Booking booking = new Booking();
-        booking.setCustomerUsername(getUsername());
+        booking.setCustomerUsername(getAuthUsername());
         booking.setBookingDate(LocalDate.now());
         booking.setWorkoutDate(workout.getDate());
         booking.setWorkout(workout);
         booking.setTotalPrice(workout.getPriceSek());
         booking.setCancelled(false);
+        Booking savedBooking = bookingRepository.save(booking);
         workout.setFreeSpots(workout.getFreeSpots() - 1);
+        workout.getBookings().add(savedBooking);
         workoutRepository.save(workout);
-        return bookingRepository.save(booking);
+        return savedBooking;
     }
 
     @Transactional
-    @Override                               //KLAR?
+    @Override                               //KLAR?//TODO-----LOG
     public Booking cancelBooking(Booking bookingToCancel) {
         Booking booking = bookingRepository.findById(bookingToCancel.getId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         String.format("No booking exists with id: %d.", bookingToCancel.getId())
                 ));
-        if(!getUsername().equals(booking.getCustomerUsername())) {
+        if(!getAuthUsername().equals(booking.getCustomerUsername())) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     String.format("You do not have permission to access this page.")
@@ -95,16 +102,19 @@ public class BookingServiceImpl implements BookingService {
 
     @Override                                      //KLAR?
     public List<Booking> getCanceledBookings() {
+        F_LOG.info("ADMIN retrieved all canceled bookings");
         return bookingRepository.findByCancelledTrue();
     }
 
     @Override                                       //KLAR?
     public List<Booking> getUpcomingBookings() {
-        return bookingRepository.findByWorkoutDateAfter(LocalDate.now());
+        F_LOG.info("ADMIN retrieved all upcoming bookings");
+        return bookingRepository.findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDate.now());
     }
 
     @Override                                        //KLAR?
     public List<Booking> getOldBookings() {
-        return bookingRepository.findByWorkoutDateGreaterThanEqual(LocalDate.now());
+        F_LOG.info("ADMIN retrieved all previous bookings");
+        return bookingRepository.findByCancelledTrueOrWorkoutDateBefore(LocalDate.now());
     }
 }

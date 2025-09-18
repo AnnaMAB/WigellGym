@@ -12,6 +12,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     List<Booking> findAllByCustomerUsername(String customerUsername);
     List<Booking> findByCancelledTrue();
-    List<Booking> findByWorkoutDateAfter(LocalDate now);
-    List<Booking> findByWorkoutDateGreaterThanEqual(LocalDate now);
+    List<Booking> findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDate now);
+    List<Booking> findByCancelledTrueOrWorkoutDateBefore(LocalDate now);
 }
