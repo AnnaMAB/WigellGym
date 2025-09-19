@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -42,13 +43,16 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    @Override                               //TODO----EURO//TODO-----LOG
+    @Override                               //TODO----EURO
     public Booking makeBooking(Workout workoutToBook) {
-        Workout workout = workoutRepository.findById(workoutToBook.getId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        String.format("No workout exists with id: %d.", workoutToBook.getId())
-                ));
+        Optional<Workout> optionalWorkout = workoutRepository.findById(workoutToBook.getId());
+        Workout workout = optionalWorkout.orElseThrow(() -> {
+            F_LOG.warn("USER tried to book a workout with id {} that doesn't exist.", workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No workout exists with id: %d.", workoutToBook.getId())
+            );
+        });
         if(workout.getFreeSpots() == 0) {
             F_LOG.warn("USER tried to book a workout with no free spots");
             throw new ResponseStatusException(
@@ -67,36 +71,44 @@ public class BookingServiceImpl implements BookingService {
         workout.setFreeSpots(workout.getFreeSpots() - 1);
         workout.getBookings().add(savedBooking);
         workoutRepository.save(workout);
+        F_LOG.info("USER made a booking, with id {}, for workout with id {}.", savedBooking.getId(), workout.getId());
         return savedBooking;
     }
 
     @Transactional
-    @Override                               //KLAR?//TODO-----LOG
+    @Override                               //KLAR?
     public Booking cancelBooking(Booking bookingToCancel) {
-        Booking booking = bookingRepository.findById(bookingToCancel.getId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        String.format("No booking exists with id: %d.", bookingToCancel.getId())
-                ));
+        Optional<Booking> optionalBooking = bookingRepository.findById(bookingToCancel.getId());
+        Booking booking = optionalBooking.orElseThrow(() -> {
+            F_LOG.warn("USER tried to cancel a booking with id {} that doesn't exist.", bookingToCancel.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No workout exists with id: %d.", bookingToCancel.getId())
+            );
+        });
         if(!getAuthUsername().equals(booking.getCustomerUsername())) {
+            F_LOG.warn("USER tried to cancel a booking, with id {}, that they are not the customer for.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     String.format("You do not have permission to access this page.")
             );
         }
         if(booking.getBookingDate().isBefore(LocalDate.now().minusDays(1))) {
+            F_LOG.warn("USER tried to cancel a booking, with id {}, to close to the workout date.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     String.format("The workout date is to close for cancellation.")
             );
         }
         if(booking.isCancelled()) {
+            F_LOG.warn("USER tried to cancel a booking, with id {}, that is already canceled.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     String.format("The workout is already canceled.")
             );
         }
         booking.setCancelled(true);
+        F_LOG.info("USER canceled booking with id {} for workout {}.", booking.getId(), booking.getWorkout().getId());
         return bookingRepository.save(booking);
     }
 

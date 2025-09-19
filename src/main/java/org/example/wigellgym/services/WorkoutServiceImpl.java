@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class WorkoutServiceImpl implements WorkoutService {
@@ -99,53 +97,70 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
 
-    @Override                               //klar?//TODO-----LOG
+    @Override                               //klar?
     public Workout updateWorkout(Workout newWorkout) {
-        Workout workoutToUpdate = workoutRepository.findById(newWorkout.getId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        String.format("No workout exists with id: %d.", newWorkout.getId())
-                ));
+        Optional<Workout> optionalWorkout = workoutRepository.findById(newWorkout.getId());
+        Workout workoutToUpdate = optionalWorkout.orElseThrow(() -> {
+            F_LOG.warn("ADMIN tried to update a workout with id {} that doesn't exist.", newWorkout.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No workout exists with id: %d.", newWorkout.getId())
+            );
+        });
+        List<String> parts = new ArrayList<>();
         if (newWorkout.getName() != null && !newWorkout.getName().isEmpty()) {
             workoutToUpdate.setName(newWorkout.getName());
+            parts.add("name");
         }
         if(newWorkout.getTypeOfWorkout() != null && newWorkout.getTypeOfWorkout().isEmpty()){
             workoutToUpdate.setTypeOfWorkout(newWorkout.getTypeOfWorkout());
+            parts.add("typeOfWorkout");
         }
         if(newWorkout.getLocation() != null && newWorkout.getLocation().isEmpty()) {
             workoutToUpdate.setLocation(newWorkout.getLocation());
+            parts.add("location");
         }
         if (newWorkout.getInstructor() == null){
             workoutToUpdate.setInstructor(newWorkout.getInstructor());
+            parts.add("instructor");
         }
         if(newWorkout.getMaxParticipants() != null) {
             if(newWorkout.getMaxParticipants()==0) {
+                F_LOG.warn("ADMIN tried to update a workout to 0 participants");
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         String.format("A workout requires at least one participant")
                 );
             } else {
                 workoutToUpdate.setMaxParticipants(newWorkout.getMaxParticipants());
+                parts.add("maxParticipants");
             }
         }
         if(newWorkout.getPriceSek() != null) {
             workoutToUpdate.setPriceSek(newWorkout.getPriceSek());
+            parts.add("priceSek");
         }
         if(newWorkout.getDate() != null) {
             workoutToUpdate.setDate(newWorkout.getDate());
+            parts.add("date");
         }
+        String updated = String.join(", ", parts);
+        F_LOG.info("ADMIN updated workout {} in the following fields: {}.", workoutToUpdate, updated);
         return workoutRepository.save(workoutToUpdate);
     }
 
 
     @Transactional
-    @Override                                   //KLAR?//TODO-----LOG
+    @Override                                   //KLAR?
     public void deleteWorkout(Integer id) {
-        Workout workout = workoutRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        String.format("No workout exists with id: %d.", id)
-                ));
+        Optional<Workout> optionalWorkout = workoutRepository.findById(id);
+        Workout workout = optionalWorkout.orElseThrow(() -> {
+            F_LOG.warn("ADMIN tried to delete a workout with id {} that doesn't exist.", id);
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No workout exists with id: %d.", id)
+            );
+        });
         List<Booking> bookings = workout.getBookings();
         for (Booking booking : bookings) {
             booking.setCancelled(true);
