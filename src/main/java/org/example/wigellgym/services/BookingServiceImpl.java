@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
             F_LOG.warn("USER tried to book a workout with no free spots");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("No free spots at the requested workout")
+                    "No free spots at the requested workout"
             );
         }
         Booking booking = new Booking();
@@ -91,21 +91,21 @@ public class BookingServiceImpl implements BookingService {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that they are not the customer for.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    String.format("You do not have permission to access this page.")
+                    "You do not have permission to access this page."
             );
         }
         if(booking.getBookingDate().isBefore(LocalDate.now().minusDays(1))) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, to close to the workout date.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    String.format("The workout date is to close for cancellation.")
+                    "The workout date is to close for cancellation."
             );
         }
         if(booking.isCancelled()) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that is already canceled.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    String.format("The workout is already canceled.")
+                    "The workout is already canceled."
             );
         }
         booking.setCancelled(true);

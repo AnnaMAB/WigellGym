@@ -45,49 +45,49 @@ public class WorkoutServiceImpl implements WorkoutService {
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("Name required")
+                    "Name required"
             );
         }
         if(workout.getTypeOfWorkout() == null || workout.getTypeOfWorkout().isEmpty()){
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("Type of workout required")
+                    "Type of workout required"
             );
         }
         if(workout.getLocation() == null || workout.getLocation().isEmpty()) {
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("Location required")
+                    "Location required"
             );
         }
         if (workout.getInstructor() == null){
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("Instructor required")
+                    "Instructor required"
             );
         }
         if(workout.getMaxParticipants() == null || workout.getMaxParticipants()==0) {
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("A workout requires at least one participant")
+                    "A workout requires at least one participant"
             );
         }
         if(workout.getPriceSek() == null) {
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("A workout requires at price, if free put: 0 for price")
+                    "A workout requires at price, if free put: 0 for price"
             );
         }
         if(workout.getDate() == null) {
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("A workout requires a date")
+                    "A workout requires a date"
             );
         }
         workout.setPreliminaryPriceEuro(workout.getPriceSek()*0.091);                //TODO konvertera euro-----------------------------------------
@@ -130,7 +130,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 F_LOG.warn("ADMIN tried to update a workout to 0 participants");
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        String.format("A workout requires at least one participant")
+                        "A workout requires at least one participant"
                 );
             } else {
                 workoutToUpdate.setMaxParticipants(newWorkout.getMaxParticipants());
