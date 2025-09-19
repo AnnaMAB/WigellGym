@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
 public class Booking {
@@ -16,7 +15,8 @@ public class Booking {
     @Column(name = "booking_id")
     private Integer id;
     @Column(length = 40, nullable = false)
-    private LocalDate bookingDate;    @Column(length = 40, nullable = false)
+    private LocalDate bookingDate;
+    @Column(length = 40, nullable = false)
     private LocalDate workoutDate;
     @Column(length = 40, nullable = false)
     private String customerUsername;
@@ -25,7 +25,9 @@ public class Booking {
     @JsonIgnoreProperties({"bookings"})
     private Workout workout;
     @Column(length = 40, nullable = false)
-    private Double totalPrice;
+    private Double totalPriceSek;
+    @Column(length = 40, nullable = false)
+    private Double totalPriceEuro;
     @JoinColumn(nullable = false)
     private boolean cancelled;
 
@@ -73,12 +75,20 @@ public class Booking {
         this.workout = workout;
     }
 
-    public Double getTotalPrice() {
-        return totalPrice;
+    public Double getTotalPriceSek() {
+        return totalPriceSek;
     }
 
-    public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setTotalPriceSek(Double totalPriceSek) {
+        this.totalPriceSek = totalPriceSek;
+    }
+
+    public Double getTotalPriceEuro() {
+        return totalPriceEuro;
+    }
+
+    public void setTotalPriceEuro(Double totalPriceEuro) {
+        this.totalPriceEuro = totalPriceEuro;
     }
 
     public boolean isCancelled() {
@@ -97,7 +107,8 @@ public class Booking {
                 ", workoutDate=" + workoutDate +
                 ", customerUsername='" + customerUsername + '\'' +
                 ", workout=" + workout +
-                ", totalPrice=" + totalPrice +
+                ", totalPriceSek=" + totalPriceSek +
+                ", totalPriceEuro=" + totalPriceEuro +
                 ", cancelled=" + cancelled +
                 '}';
     }

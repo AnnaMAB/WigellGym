@@ -32,6 +32,8 @@ public class Workout {
     @Column(nullable = false)
     private Double priceSek;
     @Column(nullable = false)
+    private Double preliminaryPriceEuro;
+    @Column(nullable = false)
     private LocalDate date;
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"date", "totalPrice", "workout"})
@@ -105,6 +107,14 @@ public class Workout {
         this.priceSek = priceSEK;
     }
 
+    public Double getPreliminaryPriceEuro() {
+        return preliminaryPriceEuro;
+    }
+
+    public void setPreliminaryPriceEuro(Double preliminaryPriceEuro) {
+        this.preliminaryPriceEuro = preliminaryPriceEuro;
+    }
+
     public LocalDate getDate() {
         return date;
     }
@@ -132,6 +142,7 @@ public class Workout {
                 ", maxParticipants=" + maxParticipants +
                 ", freeSpots=" + freeSpots +
                 ", priceSek=" + priceSek +
+                ", preliminaryPriceEuro=" + preliminaryPriceEuro +
                 ", date=" + date +
                 ", bookings=" + bookings +
                 '}';

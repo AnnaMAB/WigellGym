@@ -90,6 +90,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                     String.format("A workout requires a date")
             );
         }
+        workout.setPreliminaryPriceEuro(workout.getPriceSek()*0.091);                //TODO konvertera euro-----------------------------------------
         workout.setFreeSpots(workout.getMaxParticipants());
         Workout savedWorkout = workoutRepository.save(workout);
         F_LOG.info("ADMIN added a new workout wit id: {}", savedWorkout.getId());
@@ -97,7 +98,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
 
-    @Override                               //klar?
+    @Override                                    //TODO-----EURO
     public Workout updateWorkout(Workout newWorkout) {
         Optional<Workout> optionalWorkout = workoutRepository.findById(newWorkout.getId());
         Workout workoutToUpdate = optionalWorkout.orElseThrow(() -> {
@@ -138,12 +139,13 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         if(newWorkout.getPriceSek() != null) {
             workoutToUpdate.setPriceSek(newWorkout.getPriceSek());
-            parts.add("priceSek");
+            parts.add("price");
         }
         if(newWorkout.getDate() != null) {
             workoutToUpdate.setDate(newWorkout.getDate());
             parts.add("date");
         }
+        workoutToUpdate.setPreliminaryPriceEuro(workoutToUpdate.getPriceSek()*0.091);         //TODO konvertera euro-----------------------------------------
         String updated = String.join(", ", parts);
         F_LOG.info("ADMIN updated workout {} in the following fields: {}.", workoutToUpdate, updated);
         return workoutRepository.save(workoutToUpdate);

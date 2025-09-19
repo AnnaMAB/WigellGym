@@ -14,7 +14,7 @@ public class Speciality {
     @Column(nullable = false)
     private Integer skillLevel;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinColumn(name = "instructor_id", nullable = false)
+    @JoinColumn(name = "instructor_id", nullable = true)
     @JsonIgnore
     private Instructor instructor;
 

@@ -65,7 +65,8 @@ public class BookingServiceImpl implements BookingService {
         booking.setBookingDate(LocalDate.now());
         booking.setWorkoutDate(workout.getDate());
         booking.setWorkout(workout);
-        booking.setTotalPrice(workout.getPriceSek());
+        booking.setTotalPriceSek(workout.getPriceSek());
+        booking.setTotalPriceEuro(workout.getPriceSek()*0.091);                //TODO konvertera euro-----------------------------------------
         booking.setCancelled(false);
         Booking savedBooking = bookingRepository.save(booking);
         workout.setFreeSpots(workout.getFreeSpots() - 1);
@@ -108,6 +109,8 @@ public class BookingServiceImpl implements BookingService {
             );
         }
         booking.setCancelled(true);
+        booking.setTotalPriceEuro(0.0);
+        booking.setTotalPriceSek(0.0);
         F_LOG.info("USER canceled booking with id {} for workout {}.", booking.getId(), booking.getWorkout().getId());
         return bookingRepository.save(booking);
     }
