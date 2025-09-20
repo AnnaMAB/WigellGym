@@ -12,10 +12,10 @@ INSERT INTO workout (name, type_of_workout, instructor_id, location, max_partici
 VALUES ('Hatha Yoga', 'Yoga', 2, 'Stora salen', 22, 10, 200,  19.1, '2025-11-28');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date)
-VALUES ('Fun run', 'Cardio', 1, 'Lilla salen', 12, 3, 300, '2025-10-22');
+VALUES ('Fun run', 'Cardio', 1, 'Lilla salen', 12, 3, 300,29.2, '2025-10-22');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date)
-VALUES ('Hantlar', 'Styrke', 3, 'Stora salen', 22, 10, 200,  29.2, '2025-06-28');
+VALUES ('Hantlar', 'Styrke', 3, 'Stora salen', 22, 10, 200,  19.2, '2025-06-28');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date)
 VALUES ('Power lift', 'Styrke', 3, 'Lilla salen', 12, 3, 200,  19.1, '2025-10-26');

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/wigellgym")
+@RequestMapping("/wigellgym")
 public class CustomerController {
 
     private final WorkoutServiceImpl workoutService;

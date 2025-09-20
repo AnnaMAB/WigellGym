@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/wigellgym")
+@RequestMapping("/wigellgym")
 public class CommonController {
 
     private final InstructorServiceImpl instructorService;
