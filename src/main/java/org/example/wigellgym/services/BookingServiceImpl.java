@@ -3,14 +3,13 @@ package org.example.wigellgym.services;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.example.wigellgym.configs.AuthInfo;
 import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Workout;
 import org.example.wigellgym.repositories.BookingRepository;
 import org.example.wigellgym.repositories.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,25 +23,22 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final WorkoutRepository workoutRepository;
     private final ConversionServiceImpl conversionService;
+    private final AuthInfo authInfo;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository, ConversionServiceImpl conversionService) {
+    public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository, ConversionServiceImpl conversionService, AuthInfo authInfo) {
         this.conversionService = conversionService;
         this.bookingRepository = bookingRepository;
         this.workoutRepository = workoutRepository;
-    }
-
-    private String getAuthUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getName();
+        this.authInfo = authInfo;
     }
 
 
     @Override
     public List<Booking> getMyBookings() {          //KLAR?
         F_LOG.info("USER retrieved all their bookings");
-        return bookingRepository.findAllByCustomerUsername((getAuthUsername()));
+        return bookingRepository.findAllByCustomerUsername((authInfo.getAuthUsername()));
     }
 
     @Transactional
@@ -64,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
             );
         }
         Booking booking = new Booking();
-        booking.setCustomerUsername(getAuthUsername());
+        booking.setCustomerUsername(authInfo.getAuthUsername());
         booking.setBookingDate(LocalDate.now());
         booking.setWorkoutDate(workout.getDate());
         booking.setWorkout(workout);
@@ -90,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
                     String.format("No workout exists with id: %d.", bookingToCancel.getId())
             );
         });
-        if(!getAuthUsername().equals(booking.getCustomerUsername())) {
+        if(!authInfo.getAuthUsername().equals(booking.getCustomerUsername())) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that they are not the customer for.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,

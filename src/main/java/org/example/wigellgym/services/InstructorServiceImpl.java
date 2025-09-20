@@ -3,36 +3,31 @@ package org.example.wigellgym.services;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.example.wigellgym.configs.AuthInfo;
 import org.example.wigellgym.entities.Instructor;
 import org.example.wigellgym.repositories.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 
 @Service
 public class InstructorServiceImpl implements InstructorService {
 
     private final InstructorRepository instructorRepository;
+    private final AuthInfo authInfo;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
-    public InstructorServiceImpl(InstructorRepository instructorRepository) {
+    public InstructorServiceImpl(InstructorRepository instructorRepository, AuthInfo authInfo) {
         this.instructorRepository = instructorRepository;
+        this.authInfo = authInfo;
     }
 
     @Override                              //Klar
     public List<Instructor> getInstructors() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String role = auth.getAuthorities().stream()
-                .findFirst()
-                .map(grantedAuthority -> grantedAuthority.getAuthority().replace("ROLE_", ""))
-                .orElse("NO_ROLE");
-        F_LOG.info("{} displayed the list of all instructors", role);
+        F_LOG.info("{} displayed the list of all instructors", authInfo.getRole());
         return instructorRepository.findAll();
     }
 

@@ -1,5 +1,5 @@
 package org.example.wigellgym.services;
 
 public interface ConversionService {
-    double getConversionRate();
+    Double getConversionRate();
 }
