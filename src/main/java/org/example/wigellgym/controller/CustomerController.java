@@ -45,7 +45,7 @@ public class CustomerController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("cancelworkout")
+    @PutMapping("/cancelworkout")
     public ResponseEntity<Booking> cancelBooking(@RequestBody Booking booking) {
         return ResponseEntity.ok(bookingService.cancelBooking(booking));
     }

@@ -1,5 +1,6 @@
 package org.example.wigellgym.services;
 
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.wigellgym.entities.Instructor;
@@ -35,20 +36,21 @@ public class InstructorServiceImpl implements InstructorService {
         return instructorRepository.findAll();
     }
 
+    @Transactional
     @Override                               //Klar
     public Instructor addInstructor(Instructor instructor) {
         if(instructor.getName() == null|| instructor.getName().isEmpty()) {
             F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("Name required")
+                    "Name required"
             );
         }
         if (instructor.getSpeciality() == null){
             F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("Speciality required")
+                    "Speciality required"
             );
         }
         Instructor savedInstructor = instructorRepository.save(instructor);

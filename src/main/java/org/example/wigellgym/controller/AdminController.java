@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/wigellgym/")
+@RequestMapping("/api/wigellgym")
 public class AdminController {
 
     private final WorkoutServiceImpl workoutService;
@@ -29,44 +29,44 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("listcanceled")
+    @GetMapping("/listcanceled")
     public ResponseEntity<List<Booking>> listCanceledBookings() {
         return ResponseEntity.ok(bookingService.getCanceledBookings());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("listupcoming")
+    @GetMapping("/listupcoming")
     public ResponseEntity<List<Booking>> listUpcomingBookings() {
         return ResponseEntity.ok(bookingService.getUpcomingBookings());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("listpast")
+    @GetMapping("/listpast")
     public ResponseEntity<List<Booking>> listPastBookings() {
         return ResponseEntity.ok(bookingService.getOldBookings());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("addworkout")
+    @PostMapping("/addworkout")
     public ResponseEntity<Workout> addWorkout(@RequestBody Workout workout) {
         return ResponseEntity.ok(workoutService.addWorkout(workout));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("updateworkout")
+    @PutMapping("/updateworkout")
     public ResponseEntity<Workout> updateWorkout(@RequestBody Workout workout) {
         return ResponseEntity.ok(workoutService.updateWorkout(workout));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("remworkout/{id}")
+    @DeleteMapping("/remworkout/{id}")
     public ResponseEntity<String> deleteWorkout(@PathVariable Integer id) {
         workoutService.deleteWorkout(id);
         return ResponseEntity.ok(String.format("Entry with Id: %s has been successfully deleted.", id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("addinstructor")
+    @PostMapping("/addinstructor")
     public ResponseEntity<Instructor> addInstructor(@RequestBody Instructor instructor) {
         return ResponseEntity.ok(instructorService.addInstructor(instructor));
     }

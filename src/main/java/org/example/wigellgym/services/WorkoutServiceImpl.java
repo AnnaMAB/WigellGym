@@ -38,7 +38,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         return workoutTypes;
     }
 
-
+    @Transactional
     @Override                               //TODO-----EURO
     public Workout addWorkout(Workout workout) {
         if(workout.getName() == null|| workout.getName().isEmpty()) {
@@ -97,7 +97,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         return savedWorkout;
     }
 
-
+    @Transactional
     @Override                                    //TODO-----EURO
     public Workout updateWorkout(Workout newWorkout) {
         Optional<Workout> optionalWorkout = workoutRepository.findById(newWorkout.getId());
