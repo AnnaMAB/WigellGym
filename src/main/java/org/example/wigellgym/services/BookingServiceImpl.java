@@ -23,10 +23,12 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final WorkoutRepository workoutRepository;
+    private final ConversionServiceImpl conversionService;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository, ConversionServiceImpl conversionService) {
+        this.conversionService = conversionService;
         this.bookingRepository = bookingRepository;
         this.workoutRepository = workoutRepository;
     }
@@ -36,6 +38,7 @@ public class BookingServiceImpl implements BookingService {
         return auth.getName();
     }
 
+
     @Override
     public List<Booking> getMyBookings() {          //KLAR?
         F_LOG.info("USER retrieved all their bookings");
@@ -43,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    @Override                               //TODO----EURO
+    @Override
     public Booking makeBooking(Workout workoutToBook) {
         Optional<Workout> optionalWorkout = workoutRepository.findById(workoutToBook.getId());
         Workout workout = optionalWorkout.orElseThrow(() -> {
@@ -66,7 +69,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setWorkoutDate(workout.getDate());
         booking.setWorkout(workout);
         booking.setTotalPriceSek(workout.getPriceSek());
-        booking.setTotalPriceEuro(workout.getPriceSek()*0.091);                //TODO konvertera euro-----------------------------------------
+        booking.setTotalPriceEuro(workout.getPriceSek()*conversionService.getConversionRate());
         booking.setCancelled(false);
         Booking savedBooking = bookingRepository.save(booking);
         workout.setFreeSpots(workout.getFreeSpots() - 1);

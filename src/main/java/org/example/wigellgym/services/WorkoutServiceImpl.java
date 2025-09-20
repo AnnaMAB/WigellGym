@@ -17,13 +17,14 @@ import java.util.*;
 public class WorkoutServiceImpl implements WorkoutService {
 
     private final WorkoutRepository workoutRepository;
+    private final ConversionServiceImpl conversionService;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
-    public WorkoutServiceImpl(WorkoutRepository workoutRepository) {
+    public WorkoutServiceImpl(WorkoutRepository workoutRepository, ConversionServiceImpl conversionService) {
+        this.conversionService = conversionService;
         this.workoutRepository = workoutRepository;
     }
-
 
     @Override                               //klar?
     public Set<String> getAllWorkouts() {
@@ -39,7 +40,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Transactional
-    @Override                               //TODO-----EURO
+    @Override
     public Workout addWorkout(Workout workout) {
         if(workout.getName() == null|| workout.getName().isEmpty()) {
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
@@ -90,7 +91,8 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout requires a date"
             );
         }
-        workout.setPreliminaryPriceEuro(workout.getPriceSek()*0.091);                //TODO konvertera euro-----------------------------------------
+
+        workout.setPreliminaryPriceEuro(workout.getPriceSek()*conversionService.getConversionRate());
         workout.setFreeSpots(workout.getMaxParticipants());
         Workout savedWorkout = workoutRepository.save(workout);
         F_LOG.info("ADMIN added a new workout wit id: {}", savedWorkout.getId());
@@ -98,7 +100,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Transactional
-    @Override                                    //TODO-----EURO
+    @Override
     public Workout updateWorkout(Workout newWorkout) {
         Optional<Workout> optionalWorkout = workoutRepository.findById(newWorkout.getId());
         Workout workoutToUpdate = optionalWorkout.orElseThrow(() -> {
@@ -145,7 +147,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setDate(newWorkout.getDate());
             parts.add("date");
         }
-        workoutToUpdate.setPreliminaryPriceEuro(workoutToUpdate.getPriceSek()*0.091);         //TODO konvertera euro-----------------------------------------
+        workoutToUpdate.setPreliminaryPriceEuro(workoutToUpdate.getPriceSek()*conversionService.getConversionRate());
         String updated = String.join(", ", parts);
         F_LOG.info("ADMIN updated workout {} in the following fields: {}.", workoutToUpdate, updated);
         return workoutRepository.save(workoutToUpdate);
