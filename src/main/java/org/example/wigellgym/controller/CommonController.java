@@ -1,9 +1,7 @@
 package org.example.wigellgym.controller;
 
 import org.example.wigellgym.entities.Instructor;
-import org.example.wigellgym.services.BookingServiceImpl;
 import org.example.wigellgym.services.InstructorServiceImpl;
-import org.example.wigellgym.services.WorkoutServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
