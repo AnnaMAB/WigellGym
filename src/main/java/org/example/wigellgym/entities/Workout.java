@@ -1,7 +1,5 @@
 package org.example.wigellgym.entities;
 
-/*--Träningspass ska ha namn, typ (t.ex. yoga, styrke), max antal deltagare, pris och instruktör. */
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 

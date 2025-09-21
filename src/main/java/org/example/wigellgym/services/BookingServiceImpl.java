@@ -67,13 +67,21 @@ public class BookingServiceImpl implements BookingService {
                     "No free spots at the requested workout"
             );
         }
+        double euroRate = conversionService.getConversionRate();
+        if (euroRate == 0.0){
+            F_LOG.warn("USER tried to book a workout. Unable to reach Euro conversion API. Booking not made.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Unable to reach Euro conversion API. Booking can not be made."
+            );
+        }
         Booking booking = new Booking();
         booking.setCustomerUsername(authInfo.getAuthUsername());
         booking.setBookingDate(LocalDate.now());
         booking.setWorkoutDate(workout.getDate());
         booking.setWorkout(workout);
         booking.setTotalPriceSek(workout.getPriceSek());
-        booking.setTotalPriceEuro(workout.getPriceSek()*conversionService.getConversionRate());
+        booking.setTotalPriceEuro(workout.getPriceSek()*euroRate);
         booking.setCancelled(false);
         Booking savedBooking = bookingRepository.save(booking);
         workout.setFreeSpots(workout.getFreeSpots() - 1);

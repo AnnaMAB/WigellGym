@@ -91,11 +91,15 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout requires a date"
             );
         }
-
-        workout.setPreliminaryPriceEuro(workout.getPriceSek()*conversionService.getConversionRate());
+        double euroRate = conversionService.getConversionRate();
+        workout.setPreliminaryPriceEuro(workout.getPriceSek()*euroRate);
         workout.setFreeSpots(workout.getMaxParticipants());
         Workout savedWorkout = workoutRepository.save(workout);
-        F_LOG.info("ADMIN added a new workout wit id: {}", savedWorkout.getId());
+        if (euroRate == 0.0) {
+            F_LOG.warn("ADMIN added a new workout with id: {}. Could not reach conversion API: PreliminaryPriceEuro set to 0", savedWorkout.getId());
+        } else {
+            F_LOG.info("ADMIN added a new workout with id: {}", savedWorkout.getId());
+        }
         return savedWorkout;
     }
 
