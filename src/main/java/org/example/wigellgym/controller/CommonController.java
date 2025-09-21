@@ -1,6 +1,6 @@
 package org.example.wigellgym.controller;
 
-import org.example.wigellgym.entities.Instructor;
+import org.example.wigellgym.dto.InstructorView;
 import org.example.wigellgym.services.InstructorServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class CommonController {
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/instructors")
-    public ResponseEntity<List<Instructor>> getAllInstructors() {
+    public ResponseEntity<List<InstructorView>> getAllInstructors() {
         return ResponseEntity.ok(instructorService.getInstructors());
     }
 

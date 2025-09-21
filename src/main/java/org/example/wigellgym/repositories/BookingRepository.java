@@ -1,6 +1,7 @@
 package org.example.wigellgym.repositories;
 
 import org.example.wigellgym.entities.Booking;
+import org.example.wigellgym.entities.Workout;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +15,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findByCancelledTrue();
     List<Booking> findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDate now);
     List<Booking> findByCancelledTrueOrWorkoutDateBefore(LocalDate now);
+
+    boolean existsByWorkoutAndCustomerUsername(Workout workout, String authUsername);
 }

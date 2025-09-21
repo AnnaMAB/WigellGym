@@ -1,6 +1,6 @@
-INSERT INTO instructor (name) VALUES ('Zebbe');
-INSERT INTO instructor (name) VALUES ('Zara');
-INSERT INTO instructor (name) VALUES ('Zoran');
+INSERT INTO instructor (name, secret_info) VALUES ('Zebbe', 'secret info, only for admin: Is strongest');
+INSERT INTO instructor (name, secret_info) VALUES ('Zara', 'secret info, only for admin: Is leanest');
+INSERT INTO instructor (name, secret_info) VALUES ('Zoran', 'secret info, only for admin: is meanest');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date)
 VALUES ('Yin Yoga', 'Yoga', 2, 'Stora salen', 22, 10, 200, 19.1, '2025-06-28');

@@ -14,11 +14,10 @@ public class AuthInfo {
 
     public String getRole(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String role = auth.getAuthorities().stream()
+        return auth.getAuthorities().stream()
                 .findFirst()
                 .map(grantedAuthority -> grantedAuthority.getAuthority().replace("ROLE_", ""))
                 .orElse("NO_ROLE");
-        return role;
     }
 
 }

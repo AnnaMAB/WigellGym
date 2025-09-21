@@ -52,6 +52,14 @@ public class BookingServiceImpl implements BookingService {
                     String.format("No workout exists with id: %d.", workoutToBook.getId())
             );
         });
+        boolean alreadyBooked = bookingRepository.existsByWorkoutAndCustomerUsername(workout, authInfo.getAuthUsername());
+        if (alreadyBooked) {
+            F_LOG.warn("USER tried to book a workout that they already have a booking for");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "You have already booked the requested workout"
+            );
+        }
         if(workout.getFreeSpots() == 0) {
             F_LOG.warn("USER tried to book a workout with no free spots");
             throw new ResponseStatusException(
