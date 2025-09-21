@@ -25,8 +25,8 @@ public class ConversionServiceImpl implements ConversionService {
         Double currentRate;
         try {
             currentRate = restClient.get()
-                .uri("http://localhost:8082/convert/sek2euro")
-                //.uri("http://euro-converter:8082/convert/sek2euro")               //TODO --------Lägg in container adressen
+                //.uri("http://localhost:8082/convert/sek2euro")
+                .uri("http://euro-converter:8082/convert/sek2euro")               //TODO --------Lägg in container adressen
                 .retrieve()
                 .body(Double.class);
 
