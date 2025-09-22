@@ -34,16 +34,16 @@ INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, 
 VALUES ('2025-06-22','2025-09-12','19850101-1234', 2, 200, 19, false);
 
 INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22','2025-09-22','19751230-9101', 2, 200, 19, true);
+VALUES ('2025-06-22','2025-10-22','19751230-9101', 2, 200, 19, true);
 
 INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
 VALUES ('2025-06-22','2025-06-28','19850101-1234', 1, 200, 19, false);
 
 INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22','2025-09-22','19751230-9101', 2, 200, 19, false);
+VALUES ('2025-06-22','2025-10-22','19751230-9101', 2, 200, 19, false);
 
 INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22','2025-06-28','19850101-1234', 1, 200, 19, false);
+VALUES ('2025-06-22','2025-12-28','19850101-1234', 1, 200, 19, false);
 
 INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
 VALUES ('2025-06-22','2025-06-28','19751230-9101', 5, 200, 19, false);

@@ -110,7 +110,7 @@ public class BookingServiceImpl implements BookingService {
             );
         }
         if(booking.getBookingDate().isBefore(LocalDate.now().minusDays(1))) {
-            F_LOG.warn("USER tried to cancel a booking, with id {}, to close to the workout date.", booking.getId());
+            F_LOG.warn("USER tried to cancel a booking, with id {}, that has already passed or is to close to the workout date.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "The workout date is to close for cancellation."

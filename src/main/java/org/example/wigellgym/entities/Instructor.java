@@ -23,7 +23,7 @@ public class Instructor implements InstructorView {
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"instructor", "priceSEK", "preliminaryPriceEuro", "typeOfWorkout","maxParticipants", "bookings", "freeSpots"})
     private List<Workout> workouts;
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnoreProperties({"id"})
     private List<Speciality> speciality = new ArrayList<>();
 
