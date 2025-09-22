@@ -1,5 +1,6 @@
 package org.example.wigellgym.services;
 
+import java.util.stream.Collectors;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,16 +28,16 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Override                               //klar?
-    public Set<String> getAllWorkouts() {
-        List<Workout> workouts = workoutRepository.findAll();
+    public Map<String, Set<String>> getAllWorkouts() {
+        Set<String> typesOfWorkout = workoutRepository.findTypeOfWorkout();
+        Set<String> names;
+        Map<String, Set<String>> allWorkouts = new HashMap<>();
 
-        Set<String> workoutTypes = new HashSet<>();
-
-        for (Workout workout : workouts) {
-            workoutTypes.add(workout.getTypeOfWorkout());
+        for (String type : typesOfWorkout) {
+            names = workoutRepository.findNamesByTypeOfWorkout(type);
+            allWorkouts.put(type, names);
         }
-        F_LOG.info("USER displayed all workout types");
-        return workoutTypes;
+        return allWorkouts;
     }
 
     @Transactional

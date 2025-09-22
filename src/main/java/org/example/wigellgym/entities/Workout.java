@@ -1,5 +1,6 @@
 package org.example.wigellgym.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -21,7 +22,7 @@ public class Workout {
     private String location;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "instructor_id", nullable = false)
-    @JsonIgnoreProperties({"workouts", "speciality"})
+    @JsonIgnoreProperties({"workouts", "speciality", "secretInfo", "id"})
     private Instructor instructor;
     @Column(nullable = false)
     private Integer maxParticipants;
@@ -34,7 +35,7 @@ public class Workout {
     @Column(nullable = false)
     private LocalDate date;
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"date", "totalPrice", "workout"})
+    @JsonIgnore
     private List<Booking> bookings;
 
     public Workout() {

@@ -1,6 +1,5 @@
 package org.example.wigellgym.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -22,9 +21,10 @@ public class Instructor implements InstructorView {
     private String secretInfo;
     @JsonIgnore
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"instructor", "priceSEK", "typeOfWorkout","participants", "bookings"})
+    @JsonIgnoreProperties({"instructor", "priceSEK", "preliminaryPriceEuro", "typeOfWorkout","maxParticipants", "bookings", "freeSpots"})
     private List<Workout> workouts;
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"id"})
     private List<Speciality> speciality = new ArrayList<>();
 
 

@@ -8,7 +8,7 @@ docker rmi wigell-gym
 echo Running mvn package
 call mvn package
 echo Creating image wigell-gym
-docker build -t wigell-gym:TryNr2 .
+docker build -t wigell-gym:TryNr4 .
 echo Creating and running container wigell-gym
-docker run -d -p 6565:6565 --name wigell-gym --network services-network wigell-gym:TryNr2
+docker run -d -p 6565:6565 --name wigell-gym --network services-network wigell-gym:TryNr4
 echo Done!

@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -28,7 +29,7 @@ public class CustomerController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/workouts")
-    public ResponseEntity<Set<String>> getAllWorkouts() {
+    public ResponseEntity<Map<String, Set<String>>> getAllWorkouts() {
         return ResponseEntity.ok(workoutService.getAllWorkouts());
     }
 
