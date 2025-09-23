@@ -41,19 +41,19 @@ public class WebSecurityConfig {
                 .build();
 
         UserDetails Anna = User
-                .withUsername("19850101-1234")
+                .withUsername("anna.andersson@mail.se")
                 .password("{noop}1234")
                 .roles("USER")
                 .build();
 
         UserDetails Erik = User
-                .withUsername("19900215-5678")
+                .withUsername("erik.eriksson@mail.se")
                 .password("{noop}5678")
                 .roles("USER")
                 .build();
 
         UserDetails Maria = User
-                .withUsername("19751230-9101")
+                .withUsername("maria.malm@mail.se")
                 .password("{noop}9101")
                 .roles("USER")
                 .build();

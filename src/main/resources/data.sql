@@ -10,51 +10,80 @@ INSERT INTO speciality (type, certificate_level, instructor_id) VALUES ('Styrke'
 
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
-VALUES ('Yin Yoga', 'Yoga', 2, 'Stora salen', 22, 10, 200, 19.1, '2025-06-28 17:00:00');
+VALUES ('Yin Yoga', 'Yoga', 2, 'Stora salen', 22, 20, 200, 19.1, '2025-06-28 17:00:00');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
 VALUES ('Hantlar', 'Styrke', 3, 'Lilla salen', 12, 10, 200,  19.2, '2025-06-28 18:00:00');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
-VALUES ('Fun run', 'Cardio', 1, 'Ute', 12, 3, 200,  19.1, '2025-09-12 18:30:00');
+VALUES ('Fun run', 'Cardio', 1, 'Ute', 12, 10, 200,  19.1, '2025-09-12 18:30:00');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
-VALUES ('Fun run', 'Cardio', 1, 'Lilla salen', 12, 3, 300,29.2, '2025-10-22 16:15:00');
+VALUES ('Fun run', 'Cardio', 1, 'Ute', 12, 10, 200,19.1, '2025-10-22 16:15:00');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
-VALUES ('Hatha Yoga', 'Yoga', 2, 'Stora salen', 22, 10, 200,  19.1, '2025-11-28 17:00:00');
-
-
+VALUES ('Hatha Yoga', 'Yoga', 2, 'Stora salen', 22, 20, 200,  19.1, '2025-11-28 17:00:00');
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
-VALUES ('Power lift', 'Styrke', 3, 'Lilla salen', 12, 3, 200,  19.1, '2025-10-26 17:30:00');
+VALUES ('Power lift', 'Styrke', 3, 'Lilla salen', 12, 10, 300,  29.2, '2025-10-26 17:30:00');
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-06-28 17:00:00','19850101-1234', 1, 200, 19, false);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-09-12 18:30:00','19751230-9101', 3, 200, 19, true);
+----------1---------------
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-06-28 17:00:00','anna.andersson@mail.se', 1, 200, 19.2, true);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-09-12 18:30:00','19850101-1234', 3, 200, 19, false);
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-06-28 17:00:00','erik.eriksson@mail.se', 1, 200, 19.2, false);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-09-12 18:30:00','19751230-9101', 3, 200, 19, true);
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-06-28 17:00:00','maria.malm@mail.se', 1, 200, 19.2, false);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-06-28 17:00:00','19850101-1234', 1, 200, 19, false);
+----------2---------------
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-06-28 18:00:00','anna.andersson@mail.se', 2, 200, 19.2, false);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-09-12 18:30:002','19751230-9101', 3, 200, 19, false);
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-06-28 18:00:00','erik.eriksson@mail.se', 2, 200, 19.2, true);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-06-28 17:00:00','19850101-1234', 1, 200, 19, false);
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-06-28 18:00:00','maria.malm@mail.se', 2, 200, 19.2, false);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-06-28 18:00:00','19751230-9101', 5, 200, 19, false);
+----------3---------------
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-09-12 18:30:00','anna.andersson@mail.se', 3, 200, 19.2, false);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-10-26 17:30:00','19850101-1234', 2, 200, 19, false);
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-09-12 18:30:00','erik.eriksson@mail.se', 3, 200, 19.2, false);
 
-INSERT INTO booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
-VALUES ('2025-06-22 18:36:55','2025-10-26 17:30:00','19751230-9101', 2, 200, 19,false);
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-09-12 18:30:00','maria.malm@mail.se', 3, 200, 19.2, true);
+
+----------4---------------
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-10-22 16:15:00','anna.andersson@mail.se', 4, 200, 19.2, true);
+
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-10-22 16:15:00','erik.eriksson@mail.se', 4, 200, 19.2, false);
+
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-10-22 16:15:00','maria.malm@mail.se', 4, 200, 19.2, false);
+
+----------5---------------
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-11-28 17:00:00','anna.andersson@mail.se', 5, 200, 19.2, false);
+
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-11-28 17:00:00','erik.eriksson@mail.se', 5, 200, 19.2, true);
+
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-11-28 17:00:00','maria.malm@mail.se', 5, 200, 19.2, false);
+
+----------6---------------
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-10-26 17:30:00','anna.andersson@mail.se', 6, 300, 29.4, false);
+
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-10-26 17:30:00','erik.eriksson@mail.se', 6, 300, 29.4, false);
+
+INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)
+VALUES ('2025-06-22 18:36:55','2025-10-26 17:30:00','maria.malm@mail.se', 6, 300, 29.4, true);
