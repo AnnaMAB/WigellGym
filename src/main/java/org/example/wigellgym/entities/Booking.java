@@ -1,11 +1,11 @@
 package org.example.wigellgym.entities;
 
-/*--Bokningar ska inkludera kund, träningspass, datum och totalpris (SEK och Euro). */
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class Booking {
@@ -15,9 +15,11 @@ public class Booking {
     @Column(name = "booking_id")
     private Integer id;
     @Column(length = 40, nullable = false)
-    private LocalDate bookingDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime bookingDate;
     @Column(length = 40, nullable = false)
-    private LocalDate workoutDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime workoutDate;
     @Column(length = 40, nullable = false)
     private String customerUsername;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
@@ -43,19 +45,19 @@ public class Booking {
         this.id = id;
     }
 
-    public LocalDate getBookingDate() {
+    public LocalDateTime getBookingDate() {
         return bookingDate;
     }
 
-    public void setBookingDate(LocalDate bookingDate) {
+    public void setBookingDate(LocalDateTime bookingDate) {
         this.bookingDate = bookingDate;
     }
 
-    public LocalDate getWorkoutDate() {
+    public LocalDateTime getWorkoutDate() {
         return workoutDate;
     }
 
-    public void setWorkoutDate(LocalDate workoutDate) {
+    public void setWorkoutDate(LocalDateTime workoutDate) {
         this.workoutDate = workoutDate;
     }
 

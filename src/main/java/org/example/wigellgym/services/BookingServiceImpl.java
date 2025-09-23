@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,8 +77,8 @@ public class BookingServiceImpl implements BookingService {
         }
         Booking booking = new Booking();
         booking.setCustomerUsername(authInfo.getAuthUsername());
-        booking.setBookingDate(LocalDate.now());
-        booking.setWorkoutDate(workout.getDate());
+        booking.setBookingDate(LocalDateTime.now());
+        booking.setWorkoutDate(workout.getDateTime());
         booking.setWorkout(workout);
         booking.setTotalPriceSek(workout.getPriceSek());
         booking.setTotalPriceEuro(workout.getPriceSek()*euroRate);
@@ -109,7 +109,7 @@ public class BookingServiceImpl implements BookingService {
                     "You do not have permission to access this page."
             );
         }
-        if(booking.getBookingDate().isBefore(LocalDate.now().minusDays(1))) {
+        if(booking.getBookingDate().isBefore(LocalDateTime.now().minusDays(1))) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that has already passed or is to close to the workout date.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
@@ -139,12 +139,12 @@ public class BookingServiceImpl implements BookingService {
     @Override                                       //KLAR?
     public List<Booking> getUpcomingBookings() {
         F_LOG.info("ADMIN retrieved all upcoming bookings");
-        return bookingRepository.findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDate.now());
+        return bookingRepository.findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDateTime.now());
     }
 
     @Override                                        //KLAR?
     public List<Booking> getOldBookings() {
         F_LOG.info("ADMIN retrieved all previous bookings");
-        return bookingRepository.findByCancelledTrueOrWorkoutDateBefore(LocalDate.now());
+        return bookingRepository.findByCancelledTrueOrWorkoutDateBefore(LocalDateTime.now());
     }
 }

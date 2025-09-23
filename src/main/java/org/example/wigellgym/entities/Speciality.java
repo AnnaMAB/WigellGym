@@ -10,9 +10,9 @@ public class Speciality {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(length = 40, nullable = false)
-    private String name;
+    private String type;
     @Column(nullable = false)
-    private Integer skillLevel;
+    private Integer certificateLevel;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "instructor_id", nullable = true)
     @JsonIgnore
@@ -29,20 +29,20 @@ public class Speciality {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public Integer getSkillLevel() {
-        return skillLevel;
+    public Integer getCertificateLevel() {
+        return certificateLevel;
     }
 
-    public void setSkillLevel(Integer skillLevel) {
-        this.skillLevel = skillLevel;
+    public void setCertificateLevel(Integer certificateLevel) {
+        this.certificateLevel = certificateLevel;
     }
 
     public Instructor getInstructor() {
@@ -57,8 +57,8 @@ public class Speciality {
     public String toString() {
         return "Speciality{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", skillLevel=" + skillLevel +
+                ", type='" + type + '\'' +
+                ", certificateLevel=" + certificateLevel +
                 ", instructor=" + instructor +
                 '}';
     }

@@ -1,10 +1,11 @@
 package org.example.wigellgym.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -33,7 +34,8 @@ public class Workout {
     @Column(nullable = false)
     private Double preliminaryPriceEuro;
     @Column(nullable = false)
-    private LocalDate date;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime dateTime;
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Booking> bookings;
@@ -114,12 +116,12 @@ public class Workout {
         this.preliminaryPriceEuro = preliminaryPriceEuro;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDateTime (LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     public List<Booking> getBookings() {
@@ -142,7 +144,7 @@ public class Workout {
                 ", freeSpots=" + freeSpots +
                 ", priceSek=" + priceSek +
                 ", preliminaryPriceEuro=" + preliminaryPriceEuro +
-                ", date=" + date +
+                ", dateTime=" + dateTime +
                 ", bookings=" + bookings +
                 '}';
     }

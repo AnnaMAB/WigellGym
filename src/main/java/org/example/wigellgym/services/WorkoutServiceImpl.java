@@ -1,6 +1,5 @@
 package org.example.wigellgym.services;
 
-import java.util.stream.Collectors;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -85,11 +84,11 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout requires at price, if free put: 0 for price"
             );
         }
-        if(workout.getDate() == null) {
+        if(workout.getDateTime() == null) {
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid fields");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "A workout requires a date"
+                    "A workout requires a date and time"
             );
         }
         double euroRate = conversionService.getConversionRate();
@@ -148,9 +147,9 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setPriceSek(newWorkout.getPriceSek());
             parts.add("price");
         }
-        if(newWorkout.getDate() != null) {
-            workoutToUpdate.setDate(newWorkout.getDate());
-            parts.add("date");
+        if(newWorkout.getDateTime() != null) {
+            workoutToUpdate.setDateTime(newWorkout.getDateTime());
+            parts.add("dateTime");
         }
         workoutToUpdate.setPreliminaryPriceEuro(workoutToUpdate.getPriceSek()*conversionService.getConversionRate());
         String updated = String.join(", ", parts);

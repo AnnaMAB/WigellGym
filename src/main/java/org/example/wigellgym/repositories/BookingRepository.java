@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -13,8 +14,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     List<Booking> findAllByCustomerUsername(String customerUsername);
     List<Booking> findByCancelledTrue();
-    List<Booking> findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDate now);
-    List<Booking> findByCancelledTrueOrWorkoutDateBefore(LocalDate now);
+    List<Booking> findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDateTime now);
+    List<Booking> findByCancelledTrueOrWorkoutDateBefore(LocalDateTime now);
 
     boolean existsByWorkoutAndCustomerUsername(Workout workout, String authUsername);
 }
