@@ -7,6 +7,7 @@ import org.example.wigellgym.configs.AuthInfo;
 import org.example.wigellgym.dto.InstructorUserDTO;
 import org.example.wigellgym.dto.InstructorView;
 import org.example.wigellgym.entities.Instructor;
+import org.example.wigellgym.entities.Speciality;
 import org.example.wigellgym.repositories.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,7 @@ public class InstructorServiceImpl implements InstructorService {
     }
 
     @Transactional
-    @Override                               //Klar
+    @Override                               //TODO-----kolla om skills är tom? Snyggare spara instructur i skill
     public Instructor addInstructor(Instructor instructor) {
         if(instructor.getName() == null|| instructor.getName().isEmpty()) {
             F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields");
@@ -67,7 +68,12 @@ public class InstructorServiceImpl implements InstructorService {
                     "Speciality required"
             );
         }
+        instructor.getSpeciality().forEach(s -> s.setInstructor(instructor));
         Instructor savedInstructor = instructorRepository.save(instructor);
+/*        List<Speciality> newSpecialities = savedInstructor.getSpeciality();
+            for (Speciality speciality : newSpecialities) {
+                speciality.setInstructor(savedInstructor);
+            }*/
         F_LOG.info("ADMIN added an instructor with id {}", savedInstructor.getId());
         return savedInstructor;
     }

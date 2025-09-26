@@ -4,7 +4,10 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.wigellgym.entities.Booking;
+import org.example.wigellgym.entities.Instructor;
+import org.example.wigellgym.entities.Speciality;
 import org.example.wigellgym.entities.Workout;
+import org.example.wigellgym.repositories.InstructorRepository;
 import org.example.wigellgym.repositories.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +21,14 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     private final WorkoutRepository workoutRepository;
     private final ConversionServiceImpl conversionService;
+    private final InstructorRepository instructorRepository;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
-    public WorkoutServiceImpl(WorkoutRepository workoutRepository, ConversionServiceImpl conversionService) {
+    public WorkoutServiceImpl(WorkoutRepository workoutRepository, ConversionServiceImpl conversionService, InstructorRepository instructorRepository) {
         this.conversionService = conversionService;
         this.workoutRepository = workoutRepository;
+        this.instructorRepository = instructorRepository;
     }
 
     @Override                               //klar?
@@ -36,6 +41,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             names = workoutRepository.findNamesByTypeOfWorkout(type);
             allWorkouts.put(type, names);
         }
+        F_LOG.info("USER listed all workouts");
         return allWorkouts;
     }
 
@@ -91,6 +97,24 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout requires a date and time"
             );
         }
+        Instructor instructor = instructorRepository.findById(workout.getInstructor().getId())
+                .orElseThrow(() -> {
+                    F_LOG.warn("ADMIN tried to add a workout with a non-existing instructor (id: {})",
+                            workout.getInstructor().getId());
+                    return new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            "Instructor not found"
+                    );
+                });
+        workout.setInstructor(instructor);
+        workout.setInstructorSkillPriceMultiplier(1.0);
+        for (Speciality instructorSpeciality : instructor.getSpeciality()) {
+            if (instructorSpeciality.getType().equalsIgnoreCase(workout.getTypeOfWorkout())) {
+                workout.setInstructorSkillPriceMultiplier(1.0 + (instructorSpeciality.getCertificateLevel()* 0.1));
+                break;
+            }
+        }
+        workout.setPriceSek(workout.getPriceSek() * workout.getInstructorSkillPriceMultiplier());
         double euroRate = conversionService.getConversionRate();
         workout.setPreliminaryPriceEuro(workout.getPriceSek()*euroRate);
         workout.setFreeSpots(workout.getMaxParticipants());

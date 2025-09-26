@@ -21,9 +21,9 @@ public class Workout {
     private String typeOfWorkout;
     @Column(length = 40, nullable = false)
     private String location;
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "instructor_id", nullable = false)
-    @JsonIgnoreProperties({"workouts", "speciality", "secretInfo", "id"})
+    @JsonIgnoreProperties({"workouts", "secretInfo"})
     private Instructor instructor;
     @Column(nullable = false)
     private Integer maxParticipants;
@@ -31,6 +31,8 @@ public class Workout {
     private Integer freeSpots;
     @Column(nullable = false)
     private Double priceSek;
+    @Column
+    private Double instructorSkillPriceMultiplier;
     @Column(nullable = false)
     private Double preliminaryPriceEuro;
     @Column(nullable = false)
@@ -132,6 +134,14 @@ public class Workout {
         this.bookings = bookings;
     }
 
+    public Double getInstructorSkillPriceMultiplier() {
+        return instructorSkillPriceMultiplier;
+    }
+
+    public void setInstructorSkillPriceMultiplier(Double instructorSkillPriceMultiplier) {
+        this.instructorSkillPriceMultiplier = instructorSkillPriceMultiplier;
+    }
+
     @Override
     public String toString() {
         return "Workout{" +
@@ -143,6 +153,7 @@ public class Workout {
                 ", maxParticipants=" + maxParticipants +
                 ", freeSpots=" + freeSpots +
                 ", priceSek=" + priceSek +
+                ", instructorSkillPriceMultiplier=" + instructorSkillPriceMultiplier +
                 ", preliminaryPriceEuro=" + preliminaryPriceEuro +
                 ", dateTime=" + dateTime +
                 ", bookings=" + bookings +

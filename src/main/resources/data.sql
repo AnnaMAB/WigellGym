@@ -27,6 +27,18 @@ VALUES ('Hatha Yoga', 'Yoga', 2, 'Stora salen', 22, 20, 200,  19.1, '2025-11-28 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
 VALUES ('Power lift', 'Styrke', 3, 'Lilla salen', 12, 10, 300,  29.2, '2025-10-26 17:30:00');
 
+INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
+VALUES ('Obokad uppcoming', 'Test pass', 3, 'Lilla salen', 12, 10, 300,  29.2, '2025-10-26 17:30:00');
+
+INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
+VALUES ('Obokad passed', 'Test pass', 3, 'Lilla salen', 12, 10, 300,  29.2, '2025-08-26 17:30:00');
+
+INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
+VALUES ('Obokad idag toSoon', 'Test pass', 3, 'Lilla salen', 12, 10, 300,  29.2, '2025-09-24 12:30:00');
+
+INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, preliminary_price_euro, date_time)
+VALUES ('Obokad idag ikväll', 'Test pass', 3, 'Lilla salen', 12, 10, 300,  29.2, '2025-09-24 17:30:00');
+
 
 ----------1---------------
 INSERT INTO gym_booking (booking_date, workout_date, customer_username, workout_id, total_price_sek, total_price_euro, cancelled)

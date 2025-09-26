@@ -60,6 +60,13 @@ public class BookingServiceImpl implements BookingService {
                     "You have already booked the requested workout"
             );
         }
+        if (workout.getDateTime().isBefore(LocalDateTime.now().plusHours(1))) {
+            F_LOG.warn("USER tried to book a workout that has already happened or is to close to workout");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "To late to book workout"
+            );
+        }
         if(workout.getFreeSpots() == 0) {
             F_LOG.warn("USER tried to book a workout with no free spots");
             throw new ResponseStatusException(
@@ -99,7 +106,7 @@ public class BookingServiceImpl implements BookingService {
             F_LOG.warn("USER tried to cancel a booking with id {} that doesn't exist.", bookingToCancel.getId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    String.format("No workout exists with id: %d.", bookingToCancel.getId())
+                    String.format("No booking exists with id: %d.", bookingToCancel.getId())
             );
         });
         if(!authInfo.getAuthUsername().equals(booking.getCustomerUsername())) {
@@ -109,13 +116,6 @@ public class BookingServiceImpl implements BookingService {
                     "You do not have permission to access this page."
             );
         }
-        if(booking.getBookingDate().isBefore(LocalDateTime.now().minusDays(1))) {
-            F_LOG.warn("USER tried to cancel a booking, with id {}, that has already passed or is to close to the workout date.", booking.getId());
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "The workout date is to close for cancellation."
-            );
-        }
         if(booking.isCancelled()) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that is already canceled.", booking.getId());
             throw new ResponseStatusException(
@@ -123,6 +123,14 @@ public class BookingServiceImpl implements BookingService {
                     "The workout is already canceled."
             );
         }
+        if(booking.getWorkoutDate().isBefore(LocalDateTime.now().plusDays(1))) {
+            F_LOG.warn("USER tried to cancel a booking, with id {}, that has already passed or is to close to the workout date.", booking.getId());
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "The workout date is to close for cancellation."
+            );
+        }
+
         booking.setCancelled(true);
         booking.setTotalPriceEuro(0.0);
         booking.setTotalPriceSek(0.0);

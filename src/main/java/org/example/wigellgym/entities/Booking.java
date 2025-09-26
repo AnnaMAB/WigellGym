@@ -25,7 +25,7 @@ public class Booking {
     private String customerUsername;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "workout_id", nullable = false)
-    @JsonIgnoreProperties({"id", "priceSEK", "preliminaryPriceEuro", "maxParticipants", "freeSpots", "date"})
+    @JsonIgnoreProperties({"priceSEK", "preliminaryPriceEuro", "maxParticipants", "freeSpots", "date"})
     private Workout workout;
     @Column(length = 40, nullable = false)
     private Double totalPriceSek;
