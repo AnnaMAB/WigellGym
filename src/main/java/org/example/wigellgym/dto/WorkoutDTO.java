@@ -12,7 +12,7 @@ public class WorkoutDTO {
         private String location;
         private Integer instructorId;
         private Integer maxParticipants;
-        private Double basePriceSek;
+        private Double basePricePerHourSek;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         private LocalDateTime dateTime;
         private Long durationInMinutes;
@@ -70,12 +70,12 @@ public class WorkoutDTO {
                 this.maxParticipants = maxParticipants;
         }
 
-        public Double getBasePriceSek() {
-                return basePriceSek;
+        public Double getBasePricePerHourSek() {
+                return basePricePerHourSek;
         }
 
-        public void setBasePriceSek(Double basePriceSek) {
-                this.basePriceSek = basePriceSek;
+        public void setBasePricePerHourSek(Double basePriceSek) {
+                this.basePricePerHourSek = basePriceSek;
         }
 
         public LocalDateTime getDateTime() {
@@ -111,7 +111,7 @@ public class WorkoutDTO {
                         ", location='" + location + '\'' +
                         ", instructorId=" + instructorId +
                         ", maxParticipants=" + maxParticipants +
-                        ", basePriceSek=" + basePriceSek +
+                        ", basePricePerHourSek=" + basePricePerHourSek +
                         ", dateTime=" + dateTime +
                         ", lengthInMinutes=" + durationInMinutes +
                         ", cancelled=" + cancelled +

@@ -7,7 +7,6 @@ import org.example.wigellgym.configs.AuthInfo;
 import org.example.wigellgym.dto.InstructorUserDTO;
 import org.example.wigellgym.dto.InstructorView;
 import org.example.wigellgym.entities.Instructor;
-import org.example.wigellgym.entities.Speciality;
 import org.example.wigellgym.repositories.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +37,7 @@ public class InstructorServiceImpl implements InstructorService {
 
         if ("ADMIN".equals(role)) {
             instructorViews.addAll(instructors);
+
             F_LOG.info("ADMIN displayed the list of all instructors");
         } else {
             for (Instructor instructor : instructors) {
@@ -70,10 +70,6 @@ public class InstructorServiceImpl implements InstructorService {
         }
         instructor.getSpeciality().forEach(s -> s.setInstructor(instructor));
         Instructor savedInstructor = instructorRepository.save(instructor);
-/*        List<Speciality> newSpecialities = savedInstructor.getSpeciality();
-            for (Speciality speciality : newSpecialities) {
-                speciality.setInstructor(savedInstructor);
-            }*/
         F_LOG.info("ADMIN added an instructor with id {}", savedInstructor.getId());
         return savedInstructor;
     }

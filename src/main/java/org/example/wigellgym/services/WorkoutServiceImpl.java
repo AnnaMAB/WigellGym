@@ -84,7 +84,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout requires at least one participant"
             );
         }
-        if(workoutDto.getBasePriceSek() == null) {
+        if(workoutDto.getBasePricePerHourSek() == null) {
             F_LOG.warn("ADMIN tried to add a workout with missing or invalid price");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -129,7 +129,9 @@ public class WorkoutServiceImpl implements WorkoutService {
         newWorkout.setDateTime(workoutDto.getDateTime());
         newWorkout.setEndTime(workoutDto.getDateTime().plusMinutes(workoutDto.getDurationInMinutes()));
         newWorkout.setInstructorSkillPriceMultiplier(getMultiplier(instructor, workoutDto.getTypeOfWorkout()));
-        newWorkout.setPriceSek(workoutDto.getBasePriceSek() * newWorkout.getInstructorSkillPriceMultiplier());
+        newWorkout.setPriceSek(
+                ((workoutDto.getBasePricePerHourSek() * newWorkout.getInstructorSkillPriceMultiplier()) /60.0 )
+                        * workoutDto.getDurationInMinutes());
         newWorkout.setFreeSpots(newWorkout.getMaxParticipants());
         checkAvailability(newWorkout);
         Workout savedWorkout = workoutRepository.save(newWorkout);
@@ -185,7 +187,6 @@ public class WorkoutServiceImpl implements WorkoutService {
             parts.add("location");
         }
         Boolean newInstructor = !newWorkout.getInstructorId().equals(workoutToUpdate.getInstructor().getId());
-        double basePrice = workoutToUpdate.getPriceSek()/ workoutToUpdate.getInstructorSkillPriceMultiplier();
         if (newWorkout.getInstructorId() != null && newInstructor){
             Instructor instructor = instructorRepository.findById(newWorkout.getInstructorId())
                     .orElseThrow(() -> {
@@ -214,6 +215,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         Long duration = Duration.between(workoutToUpdate.getDateTime(), workoutToUpdate.getEndTime()).toMinutes();
         boolean timeChanged = false;
+        Boolean newPriceCalc = false;
         if(newWorkout.getDurationInMinutes() != null && newWorkout.getDurationInMinutes() != duration) {
             if(newWorkout.getDurationInMinutes()==0) {
                 F_LOG.warn("ADMIN tried to update a workout with missing or invalid duration.");
@@ -223,6 +225,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                );
             } else {
                 timeChanged = true;
+                newPriceCalc = true;
                 duration = newWorkout.getDurationInMinutes();
                 parts.add("duration");
             }
@@ -236,21 +239,32 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setEndTime(workoutToUpdate.getDateTime().plusMinutes(duration));
             parts.add("endTime");
         }
+        if (newWorkout.getBasePricePerHourSek() != null && !newWorkout.getBasePricePerHourSek().equals(workoutToUpdate.getBasePricePerHour())){
+            newPriceCalc = true;
+            workoutToUpdate.setBasePricePerHour(newWorkout.getBasePricePerHourSek());
+            parts.add("basePricePerHour");
+        }
+        if (newMultiplier) {
+            workoutToUpdate.setInstructorSkillPriceMultiplier(getMultiplier(workoutToUpdate.getInstructor(), workoutToUpdate.getTypeOfWorkout()));
+            newPriceCalc = true;
+        }
+        if (newPriceCalc) {
+            workoutToUpdate.setPriceSek(
+                    ((workoutToUpdate.getBasePricePerHour() * workoutToUpdate.getInstructorSkillPriceMultiplier()) / 60.0)
+                            * duration);
+            parts.add("calculated price");
+        }
         if(newWorkout.getCancelled() != null && newWorkout.getCancelled() != workoutToUpdate.isCancelled())  {
+            if(!newWorkout.getCancelled()) {
+                F_LOG.warn("ADMIN tried to un-cancel a cancelled workout, that is not allowed.");
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "A cancelled workout can not be un-cancelled."
+                );
+            }
             cancelWorkout(workoutToUpdate);
             workoutToUpdate.setCancelled(newWorkout.getCancelled());
-            parts.add("cancelled");
-        }
-        if (newWorkout.getBasePriceSek() != null || newMultiplier) {
-            if (newMultiplier) {
-                workoutToUpdate.setInstructorSkillPriceMultiplier(getMultiplier(workoutToUpdate.getInstructor(), workoutToUpdate.getTypeOfWorkout()));
-            }
-            if (newWorkout.getBasePriceSek() != null && !newWorkout.getBasePriceSek().equals(basePrice)) {
-                basePrice = newWorkout.getBasePriceSek();
-            }
-            double newPriceSek = basePrice * workoutToUpdate.getInstructorSkillPriceMultiplier();
-            workoutToUpdate.setPriceSek(newPriceSek);
-            parts.add("calculated price");
+            parts.add("and cancelled it.");
         }
         checkAvailability(workoutToUpdate);
         String updated = String.join(", ", parts);
@@ -259,6 +273,9 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
 
+    // Logiken är: Du får bara deleta en träning om den inte har några bokningar. Bokningar rensas troligtvis efter
+    // ett specificerat tidsintervall (5 år?) och då kan de träningar som var associerade med dem också deletas.
+    // Försöker man deleta en träning med bokningar blir den istället automatiskt inställd.
     @Transactional
     @Override                                   //KLAR?
     public String deleteWorkout(Integer id) {
@@ -271,8 +288,9 @@ public class WorkoutServiceImpl implements WorkoutService {
             );
         });
         List<Booking> bookings = workout.getBookings();
-        for (Booking booking : bookings) {
-            booking.setCancelled(true);
+        if (!bookings.isEmpty()) {
+            F_LOG.warn("ADMIN tried to delete a workout, with id: {}, that has bookings associated with it. It will be cancelled instead.", id);
+            return String.format("Workout has bookings associated with it, and can not be deleted. Instead: " + cancelWorkout(workout));
         }
         workoutRepository.deleteById(id);
         F_LOG.info("ADMIN deleted workout with id: {}", id);
@@ -281,14 +299,15 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Transactional
                                 //KLAR? @Override???
-    public void cancelWorkout(Workout workout) {
+    public String cancelWorkout(Workout workout) {
         List<Booking> bookings = workout.getBookings();
         for (Booking booking : bookings) {
             booking.setCancelled(true);
         }
         workout.setCancelled(true);
         workoutRepository.save(workout);
-        F_LOG.info("ADMIN cancelled workout with id: {}", workout.getId());
+        F_LOG.info("ADMIN cancelled workout with id: {}, and its associated bookings.", workout.getId());
+        return String.format("Entry with Id: %s, and its associated bookings, were cancelled", workout.getId());
     }
 
 
