@@ -1,5 +1,6 @@
 package org.example.wigellgym.services;
 
+import org.example.wigellgym.dto.WorkoutDTO;
 import org.example.wigellgym.entities.Workout;
 
 import java.util.Map;
@@ -9,8 +10,8 @@ public interface WorkoutService {
 
     Map<String, Set<String>> getAllWorkouts();
 
-    Workout addWorkout(Workout workout);
-    Workout updateWorkout(Workout workout);
-    void deleteWorkout(Integer id);
+    Workout addWorkout(WorkoutDTO workoutDto);
+    Workout updateWorkout(WorkoutDTO newWorkout);
+    String deleteWorkout(Integer id);
 
 }

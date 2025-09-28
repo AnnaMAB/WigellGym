@@ -1,5 +1,6 @@
 package org.example.wigellgym.controller;
 
+import org.example.wigellgym.dto.WorkoutDTO;
 import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Instructor;
 import org.example.wigellgym.entities.Workout;
@@ -29,9 +30,9 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/listcanceled")
-    public ResponseEntity<List<Booking>> listCanceledBookings() {
-        return ResponseEntity.ok(bookingService.getCanceledBookings());
+    @GetMapping("/listcancelled")
+    public ResponseEntity<List<Booking>> listCancelledBookings() {
+        return ResponseEntity.ok(bookingService.getCancelledBookings());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -48,21 +49,20 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addworkout")
-    public ResponseEntity<Workout> addWorkout(@RequestBody Workout workout) {
-        return ResponseEntity.ok(workoutService.addWorkout(workout));
+    public ResponseEntity<Workout> addWorkout(@RequestBody WorkoutDTO workoutDto) {
+        return ResponseEntity.ok(workoutService.addWorkout(workoutDto));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/updateworkout")
-    public ResponseEntity<Workout> updateWorkout(@RequestBody Workout workout) {
-        return ResponseEntity.ok(workoutService.updateWorkout(workout));
+    public ResponseEntity<Workout> updateWorkout(@RequestBody WorkoutDTO newWorkout) {
+        return ResponseEntity.ok(workoutService.updateWorkout(newWorkout));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/remworkout/{id}")
     public ResponseEntity<String> deleteWorkout(@PathVariable Integer id) {
-        workoutService.deleteWorkout(id);
-        return ResponseEntity.ok(String.format("Entry with Id: %s has been successfully deleted.", id));
+        return ResponseEntity.ok(workoutService.deleteWorkout(id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

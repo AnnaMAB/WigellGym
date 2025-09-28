@@ -117,10 +117,10 @@ public class BookingServiceImpl implements BookingService {
             );
         }
         if(booking.isCancelled()) {
-            F_LOG.warn("USER tried to cancel a booking, with id {}, that is already canceled.", booking.getId());
+            F_LOG.warn("USER tried to cancel a booking, with id {}, that is already cancelled.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "The workout is already canceled."
+                    "The workout is already cancelled."
             );
         }
         if(booking.getWorkoutDate().isBefore(LocalDateTime.now().plusDays(1))) {
@@ -134,13 +134,13 @@ public class BookingServiceImpl implements BookingService {
         booking.setCancelled(true);
         booking.setTotalPriceEuro(0.0);
         booking.setTotalPriceSek(0.0);
-        F_LOG.info("USER canceled booking with id {} for workout {}.", booking.getId(), booking.getWorkout().getId());
+        F_LOG.info("USER cancelled booking with id {} for workout {}.", booking.getId(), booking.getWorkout().getId());
         return bookingRepository.save(booking);
     }
 
     @Override                                      //KLAR?
-    public List<Booking> getCanceledBookings() {
-        F_LOG.info("ADMIN retrieved all canceled bookings");
+    public List<Booking> getCancelledBookings() {
+        F_LOG.info("ADMIN retrieved all cancelled bookings");
         return bookingRepository.findByCancelledTrue();
     }
 

@@ -34,13 +34,18 @@ public class Workout {
     @Column
     private Double instructorSkillPriceMultiplier;
     @Column(nullable = false)
-    private Double preliminaryPriceEuro;
+    private Double basePriceSek;
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dateTime;
+    @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime endTime;
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Booking> bookings;
+    @JoinColumn(nullable = false)
+    private boolean cancelled = false;
 
     public Workout() {
 
@@ -110,12 +115,12 @@ public class Workout {
         this.priceSek = priceSEK;
     }
 
-    public Double getPreliminaryPriceEuro() {
-        return preliminaryPriceEuro;
+    public Double getBasePriceSek() {
+        return basePriceSek;
     }
 
-    public void setPreliminaryPriceEuro(Double preliminaryPriceEuro) {
-        this.preliminaryPriceEuro = preliminaryPriceEuro;
+    public void setBasePriceSek(Double basePriceSek) {
+        this.basePriceSek = basePriceSek;
     }
 
     public LocalDateTime getDateTime() {
@@ -142,6 +147,22 @@ public class Workout {
         this.instructorSkillPriceMultiplier = instructorSkillPriceMultiplier;
     }
 
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public String toString() {
         return "Workout{" +
@@ -154,9 +175,11 @@ public class Workout {
                 ", freeSpots=" + freeSpots +
                 ", priceSek=" + priceSek +
                 ", instructorSkillPriceMultiplier=" + instructorSkillPriceMultiplier +
-                ", preliminaryPriceEuro=" + preliminaryPriceEuro +
+                ", basePriceSek=" + basePriceSek +
                 ", dateTime=" + dateTime +
+                ", endTime=" + endTime +
                 ", bookings=" + bookings +
+                ", cancelled=" + cancelled +
                 '}';
     }
 }
