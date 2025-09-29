@@ -19,7 +19,6 @@ public class Instructor implements InstructorView {
     private String name;
     @Column(length = 42, nullable = true)
     private String secretInfo;
-    @JsonIgnore
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"instructor", "priceSEK", "preliminaryPriceEuro", "typeOfWorkout","maxParticipants", "bookings", "freeSpots"})
     private List<Workout> workouts;
