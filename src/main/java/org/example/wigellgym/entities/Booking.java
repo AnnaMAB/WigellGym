@@ -32,7 +32,7 @@ public class Booking {
     @Column(length = 40, nullable = false)
     private Double totalPriceEuro;
     @JoinColumn(nullable = false)
-    private boolean cancelled;
+    private boolean canceled;
 
     public Booking() {
 
@@ -94,12 +94,12 @@ public class Booking {
         this.totalPriceEuro = totalPriceEuro;
     }
 
-    public boolean isCancelled() {
-        return cancelled;
+    public boolean isCanceled() {
+        return canceled;
     }
 
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 
     @Override
@@ -112,7 +112,7 @@ public class Booking {
                 ", workout=" + workout +
                 ", totalPriceSek=" + totalPriceSek +
                 ", totalPriceEuro=" + totalPriceEuro +
-                ", cancelled=" + cancelled +
+                ", canceled=" + canceled +
                 '}';
     }
 }

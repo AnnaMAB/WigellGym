@@ -105,11 +105,11 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout requires a duration in minutes."
             );
         }
-        if(workoutDto.getCancelled() == true) {
-            F_LOG.warn("ADMIN tried to add a workout that's cancelled from the start.");
+        if(workoutDto.getCanceled() != null && workoutDto.getCanceled() == true) {
+            F_LOG.warn("ADMIN tried to add a workout that's canceled from the start.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "A workout can not be created as cancelled."
+                    "A workout can not be created as canceled."
             );
         }
         Instructor instructor = instructorRepository.findById(workoutDto.getInstructorId())
@@ -254,17 +254,17 @@ public class WorkoutServiceImpl implements WorkoutService {
                             * duration);
             parts.add("calculated price");
         }
-        if(newWorkout.getCancelled() != null && newWorkout.getCancelled() != workoutToUpdate.isCancelled())  {
-            if(!newWorkout.getCancelled()) {
-                F_LOG.warn("ADMIN tried to un-cancel a cancelled workout, that is not allowed.");
+        if(newWorkout.getCanceled() != null && newWorkout.getCanceled() != workoutToUpdate.isCanceled())  {
+            if(!newWorkout.getCanceled()) {
+                F_LOG.warn("ADMIN tried to un-cancel a canceled workout, that is not allowed.");
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "A cancelled workout can not be un-cancelled."
+                        "A canceled workout can not be un-canceled."
                 );
             }
             cancelWorkout(workoutToUpdate);
-            workoutToUpdate.setCancelled(newWorkout.getCancelled());
-            parts.add("and cancelled it.");
+            workoutToUpdate.setCanceled(newWorkout.getCanceled());
+            parts.add("and canceled it.");
         }
         checkAvailability(workoutToUpdate);
         String updated = String.join(", ", parts);
@@ -289,7 +289,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         });
         List<Booking> bookings = workout.getBookings();
         if (!bookings.isEmpty()) {
-            F_LOG.warn("ADMIN tried to delete a workout, with id: {}, that has bookings associated with it. It will be cancelled instead.", id);
+            F_LOG.warn("ADMIN tried to delete a workout, with id: {}, that has bookings associated with it. It will be canceled instead.", id);
             return String.format("Workout has bookings associated with it, and can not be deleted. Instead: " + cancelWorkout(workout));
         }
         workoutRepository.deleteById(id);
@@ -302,12 +302,12 @@ public class WorkoutServiceImpl implements WorkoutService {
     public String cancelWorkout(Workout workout) {
         List<Booking> bookings = workout.getBookings();
         for (Booking booking : bookings) {
-            booking.setCancelled(true);
+            booking.setCanceled(true);
         }
-        workout.setCancelled(true);
+        workout.setCanceled(true);
         workoutRepository.save(workout);
-        F_LOG.info("ADMIN cancelled workout with id: {}, and its associated bookings.", workout.getId());
-        return String.format("Entry with Id: %s, and its associated bookings, were cancelled", workout.getId());
+        F_LOG.info("ADMIN canceled workout with id: {}, and its associated bookings.", workout.getId());
+        return String.format("Entry with Id: %s, and its associated bookings, were canceled", workout.getId());
     }
 
 
@@ -315,7 +315,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         int bufferTimeLocation = 5;
         int bufferTimeInstructor = 10;
 
-        boolean locationUnavailable = workoutRepository.existsByLocationAndCancelledFalseAndDateTimeLessThanAndEndTimeGreaterThan(
+        boolean locationUnavailable = workoutRepository.existsByLocationAndCanceledFalseAndDateTimeLessThanAndEndTimeGreaterThan(
                 workout.getLocation(), workout.getEndTime().plusMinutes(bufferTimeLocation),workout.getDateTime().minusMinutes(bufferTimeLocation));
         if (locationUnavailable) {
             F_LOG.warn("ADMIN tried to schedule a workout with an unavailable location.");
@@ -324,7 +324,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "The location is unavailable at that time."
             );
         }
-        boolean instructorUnavailable = workoutRepository.existsByInstructorAndCancelledFalseAndDateTimeLessThanAndEndTimeGreaterThan(
+        boolean instructorUnavailable = workoutRepository.existsByInstructorAndCanceledFalseAndDateTimeLessThanAndEndTimeGreaterThan(
                 workout.getInstructor(), workout.getEndTime().plusMinutes(bufferTimeInstructor),workout.getDateTime().minusMinutes(bufferTimeInstructor));
         if(instructorUnavailable) {
             F_LOG.warn("ADMIN tried to schedule a workout with an unavailable instructor.");

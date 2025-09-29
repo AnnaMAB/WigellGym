@@ -16,7 +16,7 @@ public class WorkoutDTO {
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         private LocalDateTime dateTime;
         private Long durationInMinutes;
-        private Boolean cancelled;
+        private Boolean canceled;
 
         public WorkoutDTO() {
 
@@ -86,12 +86,12 @@ public class WorkoutDTO {
                 this.dateTime = dateTime;
         }
 
-        public Boolean getCancelled() {
-                return cancelled;
+        public Boolean getCanceled() {
+                return canceled;
         }
 
-        public void setCancelled(Boolean cancelled) {
-                this.cancelled = cancelled;
+        public void setCanceled(Boolean canceled) {
+                this.canceled = canceled;
         }
 
         public Long getDurationInMinutes() {
@@ -114,7 +114,7 @@ public class WorkoutDTO {
                         ", basePricePerHourSek=" + basePricePerHourSek +
                         ", dateTime=" + dateTime +
                         ", lengthInMinutes=" + durationInMinutes +
-                        ", cancelled=" + cancelled +
+                        ", canceled=" + canceled +
                         '}';
         }
 }

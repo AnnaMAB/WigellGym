@@ -5,7 +5,6 @@ import org.example.wigellgym.entities.Workout;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,9 +12,9 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     List<Booking> findAllByCustomerUsername(String customerUsername);
-    List<Booking> findByCancelledTrue();
-    List<Booking> findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDateTime now);
-    List<Booking> findByCancelledTrueOrWorkoutDateBefore(LocalDateTime now);
+    List<Booking> findByCanceledTrue();
+    List<Booking> findByCanceledFalseAndWorkoutDateGreaterThanEqual(LocalDateTime now);
+    List<Booking> findByCanceledTrueOrWorkoutDateBefore(LocalDateTime now);
 
     boolean existsByWorkoutAndCustomerUsername(Workout workout, String authUsername);
 }

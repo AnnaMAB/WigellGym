@@ -61,10 +61,10 @@ public class BookingServiceImpl implements BookingService {
             );
         }
         if (workout.getDateTime().isBefore(LocalDateTime.now().plusHours(1))) {
-            F_LOG.warn("USER tried to book a workout that has already happened or is to close to workout");
+            F_LOG.warn("USER tried to book a workout that has already happened or is too close to workout");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "To late to book workout"
+                    "Too late to book workout"
             );
         }
         if(workout.getFreeSpots() == 0) {
@@ -89,7 +89,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setWorkout(workout);
         booking.setTotalPriceSek(workout.getPriceSek());
         booking.setTotalPriceEuro(workout.getPriceSek()*euroRate);
-        booking.setCancelled(false);
+        booking.setCanceled(false);
         Booking savedBooking = bookingRepository.save(booking);
         workout.setFreeSpots(workout.getFreeSpots() - 1);
         workout.getBookings().add(savedBooking);
@@ -113,46 +113,46 @@ public class BookingServiceImpl implements BookingService {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that they are not the customer for.", booking.getId());
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "You do not have permission to access this page."
+                    "You do not have permission to access this booking."
             );
         }
-        if(booking.isCancelled()) {
-            F_LOG.warn("USER tried to cancel a booking, with id {}, that is already cancelled.", booking.getId());
+        if(booking.isCanceled()) {
+            F_LOG.warn("USER tried to cancel a booking, with id {}, that is already canceled.", booking.getId());
             throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "The workout is already cancelled."
+                    HttpStatus.BAD_REQUEST,
+                    "The workout is already canceled."
             );
         }
         if(booking.getWorkoutDate().isBefore(LocalDateTime.now().plusDays(1))) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that has already passed or is to close to the workout date.", booking.getId());
             throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
+                    HttpStatus.BAD_REQUEST,
                     "The workout date is to close for cancellation."
             );
         }
 
-        booking.setCancelled(true);
+        booking.setCanceled(true);
         booking.setTotalPriceEuro(0.0);
         booking.setTotalPriceSek(0.0);
-        F_LOG.info("USER cancelled booking with id {} for workout {}.", booking.getId(), booking.getWorkout().getId());
+        F_LOG.info("USER canceled booking with id {} for workout {}.", booking.getId(), booking.getWorkout().getId());
         return bookingRepository.save(booking);
     }
 
     @Override                                      //KLAR?
-    public List<Booking> getCancelledBookings() {
-        F_LOG.info("ADMIN retrieved all cancelled bookings");
-        return bookingRepository.findByCancelledTrue();
+    public List<Booking> getCanceledBookings() {
+        F_LOG.info("ADMIN retrieved all canceled bookings");
+        return bookingRepository.findByCanceledTrue();
     }
 
     @Override                                       //KLAR?
     public List<Booking> getUpcomingBookings() {
         F_LOG.info("ADMIN retrieved all upcoming bookings");
-        return bookingRepository.findByCancelledFalseAndWorkoutDateGreaterThanEqual(LocalDateTime.now());
+        return bookingRepository.findByCanceledFalseAndWorkoutDateGreaterThanEqual(LocalDateTime.now());
     }
 
     @Override                                        //KLAR?
     public List<Booking> getOldBookings() {
         F_LOG.info("ADMIN retrieved all previous bookings");
-        return bookingRepository.findByCancelledTrueOrWorkoutDateBefore(LocalDateTime.now());
+        return bookingRepository.findByCanceledTrueOrWorkoutDateBefore(LocalDateTime.now());
     }
 }

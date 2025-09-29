@@ -45,7 +45,7 @@ public class Workout {
     @JsonIgnore
     private List<Booking> bookings;
     @JoinColumn(nullable = false)
-    private boolean cancelled = false;
+    private boolean canceled = false;
 
     public Workout() {
 
@@ -147,12 +147,12 @@ public class Workout {
         this.instructorSkillPriceMultiplier = instructorSkillPriceMultiplier;
     }
 
-    public boolean isCancelled() {
-        return cancelled;
+    public boolean isCanceled() {
+        return canceled;
     }
 
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 
     public LocalDateTime getEndTime() {
@@ -179,7 +179,7 @@ public class Workout {
                 ", dateTime=" + dateTime +
                 ", endTime=" + endTime +
                 ", bookings=" + bookings +
-                ", cancelled=" + cancelled +
+                ", canceled=" + canceled +
                 '}';
     }
 }

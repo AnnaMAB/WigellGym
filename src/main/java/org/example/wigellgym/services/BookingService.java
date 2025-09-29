@@ -11,7 +11,7 @@ public interface BookingService {
     Booking makeBooking(Workout workoutToBook);
     Booking cancelBooking(Booking booking);
 
-    List<Booking> getCancelledBookings();
+    List<Booking> getCanceledBookings();
     List<Booking> getUpcomingBookings();
     List<Booking> getOldBookings();
 

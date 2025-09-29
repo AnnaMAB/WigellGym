@@ -30,9 +30,9 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/listcancelled")
-    public ResponseEntity<List<Booking>> listCancelledBookings() {
-        return ResponseEntity.ok(bookingService.getCancelledBookings());
+    @GetMapping("/listcanceled")
+    public ResponseEntity<List<Booking>> listCanceledBookings() {
+        return ResponseEntity.ok(bookingService.getCanceledBookings());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
