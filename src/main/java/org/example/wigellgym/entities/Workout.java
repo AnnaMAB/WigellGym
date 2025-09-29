@@ -34,7 +34,7 @@ public class Workout {
     @Column
     private Double instructorSkillPriceMultiplier;
     @Column(nullable = false)
-    private Double basePricePerHour;
+    private Double basePricePerHourSek;
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dateTime;
@@ -115,12 +115,12 @@ public class Workout {
         this.priceSek = priceSEK;
     }
 
-    public Double getBasePricePerHour() {
-        return basePricePerHour;
+    public Double getBasePricePerHourSek() {
+        return basePricePerHourSek;
     }
 
-    public void setBasePricePerHour(Double basePricePerHour) {
-        this.basePricePerHour = basePricePerHour;
+    public void setBasePricePerHourSek(Double basePricePerHourSek) {
+        this.basePricePerHourSek = basePricePerHourSek;
     }
 
     public LocalDateTime getDateTime() {
@@ -175,7 +175,7 @@ public class Workout {
                 ", freeSpots=" + freeSpots +
                 ", priceSek=" + priceSek +
                 ", instructorSkillPriceMultiplier=" + instructorSkillPriceMultiplier +
-                ", basePricePerHour=" + basePricePerHour +
+                ", basePricePerHourSek=" + basePricePerHourSek +
                 ", dateTime=" + dateTime +
                 ", endTime=" + endTime +
                 ", bookings=" + bookings +

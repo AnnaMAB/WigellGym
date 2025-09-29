@@ -19,11 +19,11 @@ public interface WorkoutRepository extends JpaRepository<Workout, Integer> {
     @Query("SELECT DISTINCT w.typeOfWorkout FROM Workout w")
     Set<String> findTypeOfWorkout();
 
-    boolean existsByInstructorAndCanceledFalseAndDateTimeLessThanAndEndTimeGreaterThan(
-            Instructor instructor, LocalDateTime endTime, LocalDateTime startTime
-    );
 
-    boolean existsByLocationAndCanceledFalseAndDateTimeLessThanAndEndTimeGreaterThan(
-            String location, LocalDateTime endTime, LocalDateTime startTime
-    );
+    boolean existsByLocationAndCanceledFalseAndIdNotAndDateTimeLessThanAndEndTimeGreaterThan(
+            String location, Integer id, java.time.LocalDateTime endTime, java.time.LocalDateTime startTime);
+
+    boolean existsByInstructorAndCanceledFalseAndIdNotAndDateTimeLessThanAndEndTimeGreaterThan(
+            Instructor instructor, Integer id, java.time.LocalDateTime endTime, java.time.LocalDateTime startTime);
+
 }

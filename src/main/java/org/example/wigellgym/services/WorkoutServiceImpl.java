@@ -31,7 +31,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         this.instructorRepository = instructorRepository;
     }
 
-    @Override                               //klar?
+    @Override
     public Map<String, Set<String>> getAllWorkouts() {
         Set<String> typesOfWorkout = workoutRepository.findTypeOfWorkout();
         Set<String> names;
@@ -129,6 +129,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         newWorkout.setDateTime(workoutDto.getDateTime());
         newWorkout.setEndTime(workoutDto.getDateTime().plusMinutes(workoutDto.getDurationInMinutes()));
         newWorkout.setInstructorSkillPriceMultiplier(getMultiplier(instructor, workoutDto.getTypeOfWorkout()));
+        newWorkout.setBasePricePerHourSek(workoutDto.getBasePricePerHourSek());
         newWorkout.setPriceSek(
                 ((workoutDto.getBasePricePerHourSek() * newWorkout.getInstructorSkillPriceMultiplier()) /60.0 )
                         * workoutDto.getDurationInMinutes());
@@ -186,8 +187,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setLocation(newWorkout.getLocation());
             parts.add("location");
         }
-        Boolean newInstructor = !newWorkout.getInstructorId().equals(workoutToUpdate.getInstructor().getId());
-        if (newWorkout.getInstructorId() != null && newInstructor){
+        if (newWorkout.getInstructorId() != null && !newWorkout.getInstructorId().equals(workoutToUpdate.getInstructor().getId())){
             Instructor instructor = instructorRepository.findById(newWorkout.getInstructorId())
                     .orElseThrow(() -> {
                         F_LOG.warn("ADMIN tried to update a workout with a non-existing instructor (id: {})",
@@ -201,7 +201,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setInstructor(instructor);
             parts.add("instructor");
         }
-        if(newWorkout.getMaxParticipants() != null && newWorkout.getMaxParticipants().equals(workoutToUpdate.getMaxParticipants())) {
+        if(newWorkout.getMaxParticipants() != null && !newWorkout.getMaxParticipants().equals(workoutToUpdate.getMaxParticipants())) {
             if(newWorkout.getMaxParticipants()==0) {
                 F_LOG.warn("ADMIN tried to update a workout to 0 participants");
                 throw new ResponseStatusException(
@@ -239,10 +239,10 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setEndTime(workoutToUpdate.getDateTime().plusMinutes(duration));
             parts.add("endTime");
         }
-        if (newWorkout.getBasePricePerHourSek() != null && !newWorkout.getBasePricePerHourSek().equals(workoutToUpdate.getBasePricePerHour())){
+        if (newWorkout.getBasePricePerHourSek() != null && !newWorkout.getBasePricePerHourSek().equals(workoutToUpdate.getBasePricePerHourSek())){
             newPriceCalc = true;
-            workoutToUpdate.setBasePricePerHour(newWorkout.getBasePricePerHourSek());
-            parts.add("basePricePerHour");
+            workoutToUpdate.setBasePricePerHourSek(newWorkout.getBasePricePerHourSek());
+            parts.add("basePricePerHourSek");
         }
         if (newMultiplier) {
             workoutToUpdate.setInstructorSkillPriceMultiplier(getMultiplier(workoutToUpdate.getInstructor(), workoutToUpdate.getTypeOfWorkout()));
@@ -250,7 +250,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         if (newPriceCalc) {
             workoutToUpdate.setPriceSek(
-                    ((workoutToUpdate.getBasePricePerHour() * workoutToUpdate.getInstructorSkillPriceMultiplier()) / 60.0)
+                    ((workoutToUpdate.getBasePricePerHourSek() * workoutToUpdate.getInstructorSkillPriceMultiplier()) / 60.0)
                             * duration);
             parts.add("calculated price");
         }
@@ -265,6 +265,13 @@ public class WorkoutServiceImpl implements WorkoutService {
             cancelWorkout(workoutToUpdate);
             workoutToUpdate.setCanceled(newWorkout.getCanceled());
             parts.add("and canceled it.");
+        }
+        if (parts.isEmpty()){
+            F_LOG.warn("ADMIN tried to update workout {} but no fields were changed.", workoutToUpdate.getId());
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "No fields to update. At least one field must be changed."
+            );
         }
         checkAvailability(workoutToUpdate);
         String updated = String.join(", ", parts);
@@ -290,16 +297,20 @@ public class WorkoutServiceImpl implements WorkoutService {
         List<Booking> bookings = workout.getBookings();
         if (!bookings.isEmpty()) {
             F_LOG.warn("ADMIN tried to delete a workout, with id: {}, that has bookings associated with it. It will be canceled instead.", id);
-            return String.format("Workout has bookings associated with it, and can not be deleted. Instead: " + cancelWorkout(workout));
+            return String.format("Workout has bookings associated with it and can not be deleted. It will be canceled instead: " + cancelWorkout(workout));
         }
         workoutRepository.deleteById(id);
         F_LOG.info("ADMIN deleted workout with id: {}", id);
-        return String.format("Entry with Id: %s has been successfully deleted.", id);
+        return String.format("Workout with Id: %s has been successfully deleted.", id);
     }
 
     @Transactional
                                 //KLAR? @Override???
     public String cancelWorkout(Workout workout) {
+        if (workout.isCanceled()){
+            F_LOG.info("ADMIN tried to canceled a workout with id: {}, but it was already canceled.", workout.getId());
+            return String.format("Workout with Id: %s is already canceled.", workout.getId());
+        }
         List<Booking> bookings = workout.getBookings();
         for (Booking booking : bookings) {
             booking.setCanceled(true);
@@ -307,7 +318,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         workout.setCanceled(true);
         workoutRepository.save(workout);
         F_LOG.info("ADMIN canceled workout with id: {}, and its associated bookings.", workout.getId());
-        return String.format("Entry with Id: %s, and its associated bookings, were canceled", workout.getId());
+        return String.format("Workout with Id: %s, and its associated bookings, were canceled.", workout.getId());
     }
 
 
@@ -315,8 +326,9 @@ public class WorkoutServiceImpl implements WorkoutService {
         int bufferTimeLocation = 5;
         int bufferTimeInstructor = 10;
 
-        boolean locationUnavailable = workoutRepository.existsByLocationAndCanceledFalseAndDateTimeLessThanAndEndTimeGreaterThan(
-                workout.getLocation(), workout.getEndTime().plusMinutes(bufferTimeLocation),workout.getDateTime().minusMinutes(bufferTimeLocation));
+        boolean locationUnavailable = workoutRepository.existsByLocationAndCanceledFalseAndIdNotAndDateTimeLessThanAndEndTimeGreaterThan(
+                workout.getLocation(), workout.getId() == null ? -1 : workout.getId(), workout.getEndTime().plusMinutes(bufferTimeLocation),
+                workout.getDateTime().minusMinutes(bufferTimeLocation));
         if (locationUnavailable) {
             F_LOG.warn("ADMIN tried to schedule a workout with an unavailable location.");
             throw new ResponseStatusException(
@@ -324,8 +336,9 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "The location is unavailable at that time."
             );
         }
-        boolean instructorUnavailable = workoutRepository.existsByInstructorAndCanceledFalseAndDateTimeLessThanAndEndTimeGreaterThan(
-                workout.getInstructor(), workout.getEndTime().plusMinutes(bufferTimeInstructor),workout.getDateTime().minusMinutes(bufferTimeInstructor));
+        boolean instructorUnavailable = workoutRepository.existsByInstructorAndCanceledFalseAndIdNotAndDateTimeLessThanAndEndTimeGreaterThan(
+                workout.getInstructor(), workout.getId() == null ? -1 : workout.getId(), workout.getEndTime().plusMinutes(bufferTimeInstructor),
+                workout.getDateTime().minusMinutes(bufferTimeInstructor));
         if(instructorUnavailable) {
             F_LOG.warn("ADMIN tried to schedule a workout with an unavailable instructor.");
             throw new ResponseStatusException(
