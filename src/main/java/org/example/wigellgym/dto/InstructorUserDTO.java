@@ -1,15 +1,14 @@
 package org.example.wigellgym.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.example.wigellgym.entities.Speciality;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InstructorUserDTO implements InstructorView{
+
     private int id;
     private String name;
-    @JsonIgnoreProperties({"id"})
     private List<Speciality> speciality = new ArrayList<>();
 
     public InstructorUserDTO() {

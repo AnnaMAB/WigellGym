@@ -294,7 +294,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
 
-    // Logiken är: Du får bara deleta en träning om den inte har några bokningar. Bokningar rensas troligtvis efter
+    // Logiken är: Du får bara deleta en träning om den inte har några bokningar. Bokningarna rensas troligtvis efter
     // ett specificerat tidsintervall (5 år?) och då kan de träningar som var associerade med dem också deletas.
     // Försöker man deleta en träning med bokningar blir den istället automatiskt inställd.
     @Transactional
@@ -316,6 +316,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         F_LOG.info("ADMIN deleted workout with id: {}", id);
         return String.format("Workout with Id: %s has been successfully deleted.", id);
     }
+
 
     @Transactional
     @Override
@@ -341,6 +342,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         boolean locationUnavailable = workoutRepository.existsByLocationAndCanceledFalseAndIdNotAndDateTimeLessThanAndEndTimeGreaterThan(
                 workout.getLocation(), workout.getId() == null ? -1 : workout.getId(), workout.getEndTime().plusMinutes(bufferTimeLocation),
                 workout.getDateTime().minusMinutes(bufferTimeLocation));
+
         if (locationUnavailable) {
             F_LOG.warn("ADMIN tried to schedule a workout with an unavailable location.");
             throw new ResponseStatusException(
@@ -351,6 +353,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         boolean instructorUnavailable = workoutRepository.existsByInstructorAndCanceledFalseAndIdNotAndDateTimeLessThanAndEndTimeGreaterThan(
                 workout.getInstructor(), workout.getId() == null ? -1 : workout.getId(), workout.getEndTime().plusMinutes(bufferTimeInstructor),
                 workout.getDateTime().minusMinutes(bufferTimeInstructor));
+
         if(instructorUnavailable) {
             F_LOG.warn("ADMIN tried to schedule a workout with an unavailable instructor.");
             throw new ResponseStatusException(

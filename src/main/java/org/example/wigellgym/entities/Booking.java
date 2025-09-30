@@ -15,11 +15,13 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "booking_id")
     private Integer id;
+    @JoinColumn(nullable = false)
+    private boolean canceled;
     @Column(length = 40, nullable = false)
     private String customerUsername;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "workout_id", nullable = false)
-    @JsonIgnoreProperties({"priceSEK", "preliminaryPriceEuro", "maxParticipants", "freeSpots", "date"})
+    @JsonIgnoreProperties({"priceSEK", "maxParticipants", "freeSpots"})
     private Workout workout;
     @Column(length = 40, nullable = false)
     private Double totalPriceSek;
@@ -28,8 +30,7 @@ public class Booking {
     @Column(length = 40, nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime bookingDate;
-    @JoinColumn(nullable = false)
-    private boolean canceled;
+
 
     public Booking() {
 
