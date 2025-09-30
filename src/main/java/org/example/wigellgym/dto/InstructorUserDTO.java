@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InstructorUserDTO implements InstructorView{
+    private int id;
     private String name;
     @JsonIgnoreProperties({"id"})
     private List<Speciality> speciality = new ArrayList<>();
@@ -29,5 +30,22 @@ public class InstructorUserDTO implements InstructorView{
 
     public void setSpeciality(List<Speciality> speciality) {
         this.speciality = speciality;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "InstructorUserDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", speciality=" + speciality +
+                '}';
     }
 }

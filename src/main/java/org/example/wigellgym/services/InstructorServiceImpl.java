@@ -29,7 +29,7 @@ public class InstructorServiceImpl implements InstructorService {
         this.authInfo = authInfo;
     }
 
-    @Override                              //Klar
+    @Override
     public List<InstructorView> getInstructors() {
         List<Instructor> instructors = instructorRepository.findAll();
         List<InstructorView> instructorViews = new ArrayList<>();
@@ -37,32 +37,32 @@ public class InstructorServiceImpl implements InstructorService {
 
         if ("ADMIN".equals(role)) {
             instructorViews.addAll(instructors);
-
-            F_LOG.info("ADMIN displayed the list of all instructors");
+            F_LOG.info("ADMIN displayed the list of all instructors.");
         } else {
             for (Instructor instructor : instructors) {
                 InstructorUserDTO dto = new InstructorUserDTO();
+                dto.setId(instructor.getId());
                 dto.setName(instructor.getName());
                 dto.setSpeciality(instructor.getSpeciality());
                 instructorViews.add(dto);
             }
-            F_LOG.info("USER displayed the redacted list of all instructors");
+            F_LOG.info("USER displayed the redacted list of all instructors.");
         }
         return instructorViews;
     }
 
     @Transactional
-    @Override                               //TODO-----kolla om skills är tom? Snyggare spara instructur i skill
+    @Override
     public Instructor addInstructor(Instructor instructor) {
         if(instructor.getName() == null|| instructor.getName().isEmpty()) {
-            F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields");
+            F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Name required"
             );
         }
         if (instructor.getSpeciality() == null){
-            F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields");
+            F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Speciality required"
@@ -70,7 +70,7 @@ public class InstructorServiceImpl implements InstructorService {
         }
         instructor.getSpeciality().forEach(s -> s.setInstructor(instructor));
         Instructor savedInstructor = instructorRepository.save(instructor);
-        F_LOG.info("ADMIN added an instructor with id {}", savedInstructor.getId());
+        F_LOG.info("ADMIN added an instructor with id {}.", savedInstructor.getId());
         return savedInstructor;
     }
 }

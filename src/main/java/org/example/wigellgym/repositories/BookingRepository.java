@@ -13,8 +13,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     List<Booking> findAllByCustomerUsername(String customerUsername);
     List<Booking> findByCanceledTrue();
-    List<Booking> findByCanceledFalseAndWorkoutDateGreaterThanEqual(LocalDateTime now);
-    List<Booking> findByCanceledTrueOrWorkoutDateBefore(LocalDateTime now);
+    List<Booking> findByCanceledFalseAndWorkout_DateTimeGreaterThanEqual(LocalDateTime now);
+    List<Booking> findByCanceledTrueOrWorkout_DateTimeBefore(LocalDateTime now);
 
-    boolean existsByWorkoutAndCustomerUsername(Workout workout, String authUsername);
+    boolean existsByWorkoutAndCustomerUsernameAndCanceledFalse(Workout workout, String authUsername);
 }

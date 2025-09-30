@@ -15,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -36,56 +35,56 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public List<Booking> getMyBookings() {          //KLAR?
-        F_LOG.info("USER retrieved all their bookings");
+    public List<Booking> getMyBookings() {
+        F_LOG.info("USER retrieved all their bookings.");
         return bookingRepository.findAllByCustomerUsername((authInfo.getAuthUsername()));
     }
 
     @Transactional
     @Override
     public Booking makeBooking(Workout workoutToBook) {
-        Optional<Workout> optionalWorkout = workoutRepository.findById(workoutToBook.getId());
-        Workout workout = optionalWorkout.orElseThrow(() -> {
+        Workout workout = workoutRepository.findById(workoutToBook.getId()).orElseThrow(() -> {
             F_LOG.warn("USER tried to book a workout with id {} that doesn't exist.", workoutToBook.getId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No workout exists with id: %d.", workoutToBook.getId())
             );
         });
-        boolean alreadyBooked = bookingRepository.existsByWorkoutAndCustomerUsername(workout, authInfo.getAuthUsername());
+        boolean alreadyBooked = bookingRepository.existsByWorkoutAndCustomerUsernameAndCanceledFalse(workout, authInfo.getAuthUsername());
         if (alreadyBooked) {
-            F_LOG.warn("USER tried to book a workout that they already have a booking for");
+            F_LOG.warn("USER tried to book a workout that they already have a booking for.");
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "You have already booked the requested workout"
+                    HttpStatus.CONFLICT,
+                    "You have already booked the requested workout."
             );
         }
         if (workout.getDateTime().isBefore(LocalDateTime.now().plusHours(1))) {
-            F_LOG.warn("USER tried to book a workout that has already happened or is too close to workout");
+            F_LOG.warn("USER tried to book a workout that has already happened or is too close to workout.");
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Too late to book workout"
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Too late to book workout."
             );
         }
         if(workout.getFreeSpots() == 0) {
-            F_LOG.warn("USER tried to book a workout with no free spots");
+            F_LOG.warn("USER tried to book a workout with no free spots.");
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "No free spots at the requested workout"
+                    HttpStatus.CONFLICT,
+                    "No free spots at the requested workout."
             );
         }
-        double euroRate = conversionService.getConversionRate();
-        if (euroRate == 0.0){
+        double euroRate;
+        try {
+            euroRate = conversionService.getConversionRate();
+        } catch (IllegalStateException e) {
             F_LOG.warn("USER tried to book a workout. Unable to reach Euro conversion API. Booking not made.");
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Unable to reach Euro conversion API. Booking can not be made."
+                    HttpStatus.SERVICE_UNAVAILABLE,
+                    "Unable to reach Euro conversion API. Booking cannot be made."
             );
         }
         Booking booking = new Booking();
         booking.setCustomerUsername(authInfo.getAuthUsername());
         booking.setBookingDate(LocalDateTime.now());
-        booking.setWorkoutDate(workout.getDateTime());
         booking.setWorkout(workout);
         booking.setTotalPriceSek(workout.getPriceSek());
         booking.setTotalPriceEuro(workout.getPriceSek()*euroRate);
@@ -99,10 +98,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    @Override                               //KLAR?
+    @Override
     public Booking cancelBooking(Booking bookingToCancel) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(bookingToCancel.getId());
-        Booking booking = optionalBooking.orElseThrow(() -> {
+        Booking booking = bookingRepository.findById(bookingToCancel.getId()).orElseThrow(() -> {
             F_LOG.warn("USER tried to cancel a booking with id {} that doesn't exist.", bookingToCancel.getId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -112,25 +110,24 @@ public class BookingServiceImpl implements BookingService {
         if(!authInfo.getAuthUsername().equals(booking.getCustomerUsername())) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that they are not the customer for.", booking.getId());
             throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
+                    HttpStatus.FORBIDDEN,
                     "You do not have permission to access this booking."
             );
         }
         if(booking.isCanceled()) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that is already canceled.", booking.getId());
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.CONFLICT,
                     "The workout is already canceled."
             );
         }
-        if(booking.getWorkoutDate().isBefore(LocalDateTime.now().plusDays(1))) {
+        if(booking.getWorkout().getDateTime().isBefore(LocalDateTime.now().plusDays(1))) {
             F_LOG.warn("USER tried to cancel a booking, with id {}, that has already passed or is to close to the workout date.", booking.getId());
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.UNPROCESSABLE_ENTITY,
                     "The workout date is to close for cancellation."
             );
         }
-
         booking.setCanceled(true);
         booking.setTotalPriceEuro(0.0);
         booking.setTotalPriceSek(0.0);
@@ -138,21 +135,21 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.save(booking);
     }
 
-    @Override                                      //KLAR?
+    @Override
     public List<Booking> getCanceledBookings() {
-        F_LOG.info("ADMIN retrieved all canceled bookings");
+        F_LOG.info("ADMIN retrieved all canceled bookings.");
         return bookingRepository.findByCanceledTrue();
     }
 
-    @Override                                       //KLAR?
+    @Override
     public List<Booking> getUpcomingBookings() {
-        F_LOG.info("ADMIN retrieved all upcoming bookings");
-        return bookingRepository.findByCanceledFalseAndWorkoutDateGreaterThanEqual(LocalDateTime.now());
+        F_LOG.info("ADMIN retrieved all upcoming bookings.");
+        return bookingRepository.findByCanceledFalseAndWorkout_DateTimeGreaterThanEqual(LocalDateTime.now());
     }
 
-    @Override                                        //KLAR?
+    @Override
     public List<Booking> getOldBookings() {
-        F_LOG.info("ADMIN retrieved all previous bookings");
-        return bookingRepository.findByCanceledTrueOrWorkoutDateBefore(LocalDateTime.now());
+        F_LOG.info("ADMIN retrieved all previous bookings.");
+        return bookingRepository.findByCanceledTrueOrWorkout_DateTimeBefore(LocalDateTime.now());
     }
 }

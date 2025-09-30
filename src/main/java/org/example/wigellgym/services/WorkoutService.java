@@ -13,5 +13,5 @@ public interface WorkoutService {
     Workout addWorkout(WorkoutDTO workoutDto);
     Workout updateWorkout(WorkoutDTO newWorkout);
     String deleteWorkout(Integer id);
-
+    String cancelWorkout(Workout workout);
 }

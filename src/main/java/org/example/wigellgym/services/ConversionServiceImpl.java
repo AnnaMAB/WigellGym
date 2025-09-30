@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -25,18 +26,25 @@ public class ConversionServiceImpl implements ConversionService {
 
     @Override
     public Double getConversionRate() {
-        Double currentRate;
         try {
-            currentRate = restClient.get()
+            ResponseEntity<Double> response = restClient.get()
                 .uri(converterApiUrl)
                 .retrieve()
-                .body(Double.class);
+                .toEntity(Double.class);
 
-        } catch (RestClientException e) {                                           // Metoden som kallat på getConversionRate() får
-            F_LOG.error("API unreachable, euro conversion rate set to 0");          // bestämma om den vill kasta eller köra vidare med 0.0
-            currentRate = 0.0;
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                F_LOG.info("Conversion rate fetched successfully: {}", response.getBody());
+                return response.getBody();
+            } else {
+                F_LOG.warn("Conversion rate fetching failed: {}", response.getStatusCode());
+                throw new IllegalStateException(
+                        response.getStatusCode().toString());
+            }
+        } catch (RestClientException e) {
+            F_LOG.warn("ConversionRate API unreachable");
+            throw new IllegalStateException("Failed to fetch conversion rate", e);
         }
-        return currentRate;
     }
 
 }

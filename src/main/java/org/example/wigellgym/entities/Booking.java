@@ -16,12 +16,6 @@ public class Booking {
     @Column(name = "booking_id")
     private Integer id;
     @Column(length = 40, nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime bookingDate;
-    @Column(length = 40, nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime workoutDate;
-    @Column(length = 40, nullable = false)
     private String customerUsername;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "workout_id", nullable = false)
@@ -31,6 +25,9 @@ public class Booking {
     private Double totalPriceSek;
     @Column(length = 40, nullable = false)
     private Double totalPriceEuro;
+    @Column(length = 40, nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime bookingDate;
     @JoinColumn(nullable = false)
     private boolean canceled;
 
@@ -52,14 +49,6 @@ public class Booking {
 
     public void setBookingDate(LocalDateTime bookingDate) {
         this.bookingDate = bookingDate;
-    }
-
-    public LocalDateTime getWorkoutDate() {
-        return workoutDate;
-    }
-
-    public void setWorkoutDate(LocalDateTime workoutDate) {
-        this.workoutDate = workoutDate;
     }
 
     public String getCustomerUsername() {
@@ -107,7 +96,6 @@ public class Booking {
         return "Booking{" +
                 "id=" + id +
                 ", bookingDate=" + bookingDate +
-                ", workoutDate=" + workoutDate +
                 ", customerUsername='" + customerUsername + '\'' +
                 ", workout=" + workout +
                 ", totalPriceSek=" + totalPriceSek +

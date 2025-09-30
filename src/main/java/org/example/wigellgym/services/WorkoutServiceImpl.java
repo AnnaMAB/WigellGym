@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -50,52 +51,52 @@ public class WorkoutServiceImpl implements WorkoutService {
     public Workout addWorkout(WorkoutDTO workoutDto) {
         Workout newWorkout = new Workout();
         if(workoutDto.getName() == null|| workoutDto.getName().isEmpty()) {
-            F_LOG.warn("ADMIN tried to add a workout with missing or invalid name");
+            F_LOG.warn("ADMIN tried to add a workout with missing or invalid name.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Name required"
+                    "Name required."
             );
         }
         if(workoutDto.getTypeOfWorkout() == null || workoutDto.getTypeOfWorkout().isEmpty()){
-            F_LOG.warn("ADMIN tried to add a workout with missing or invalid type");
+            F_LOG.warn("ADMIN tried to add a workout with missing or invalid type.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Type of workout required"
+                    "Type of workout required."
             );
         }
         if(workoutDto.getLocation() == null || workoutDto.getLocation().isEmpty()) {
-            F_LOG.warn("ADMIN tried to add a workout with missing or invalid location");
+            F_LOG.warn("ADMIN tried to add a workout with missing or invalid location.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Location required"
+                    "Location required."
             );
         }
         if (workoutDto.getInstructorId() == null){
-            F_LOG.warn("ADMIN tried to add a workout missing instructor");
+            F_LOG.warn("ADMIN tried to add a workout missing instructor.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Instructor required"
+                    "Instructor required."
             );
         }
         if(workoutDto.getMaxParticipants() == null || workoutDto.getMaxParticipants()==0) {
-            F_LOG.warn("ADMIN tried to add a workout with missing or invalid MaxParticipants");
+            F_LOG.warn("ADMIN tried to add a workout with missing or invalid MaxParticipants.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "A workout requires at least one participant"
+                    "A workout requires at least one participant."
             );
         }
         if(workoutDto.getBasePricePerHourSek() == null) {
-            F_LOG.warn("ADMIN tried to add a workout with missing or invalid price");
+            F_LOG.warn("ADMIN tried to add a workout with missing or invalid price.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "A workout requires at price, if free put: 0 for price"
+                    "BasePrice required, if free put: 0."
             );
         }
-        if(workoutDto.getDateTime() == null) {
-            F_LOG.warn("ADMIN tried to add a workout with missing or invalid date and time");
+        if(workoutDto.getDateTime() == null || workoutDto.getDateTime().isBefore(LocalDateTime.now())) {
+            F_LOG.warn("ADMIN tried to add a workout with missing or invalid date and time.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "A workout requires a date and time."
+                    "A workout requires a date and time that have not already passed."
             );
         }
         if(workoutDto.getDurationInMinutes() == null) {
@@ -118,7 +119,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                             workoutDto.getInstructorId());
                     return new ResponseStatusException(
                             HttpStatus.NOT_FOUND,
-                            "Instructor not found"
+                            "Instructor not found."
                     );
                 });
         newWorkout.setName(workoutDto.getName());
@@ -143,8 +144,14 @@ public class WorkoutServiceImpl implements WorkoutService {
     @Transactional
     @Override
     public Workout updateWorkout(WorkoutDTO newWorkout) {
-        Optional<Workout> optionalWorkout = workoutRepository.findById(newWorkout.getId());
-        Workout workoutToUpdate = optionalWorkout.orElseThrow(() -> {
+        if (newWorkout.getId() == null) {
+            F_LOG.warn("ADMIN tried to update a workout without providing an id.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Workout id must be provided for update"
+            );
+        }
+        Workout workoutToUpdate = workoutRepository.findById(newWorkout.getId()).orElseThrow(() -> {
             F_LOG.warn("ADMIN tried to update a workout with id {} that doesn't exist.", newWorkout.getId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -154,10 +161,10 @@ public class WorkoutServiceImpl implements WorkoutService {
         List<String> parts = new ArrayList<>();
         if (newWorkout.getName() != null && !newWorkout.getName().equals(workoutToUpdate.getName())) {
             if(newWorkout.getName().isEmpty()) {
-                F_LOG.warn("ADMIN tried to update a workout with invalid name");
+                F_LOG.warn("ADMIN tried to update a workout with invalid name.");
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Name can not be left blank"
+                        "Name can not be left blank."
                 );
             }
             workoutToUpdate.setName(newWorkout.getName());
@@ -166,10 +173,10 @@ public class WorkoutServiceImpl implements WorkoutService {
         Boolean newMultiplier = false;
         if(newWorkout.getTypeOfWorkout() != null && !newWorkout.getTypeOfWorkout().equals(workoutToUpdate.getTypeOfWorkout())){
             if(newWorkout.getTypeOfWorkout().isEmpty()) {
-                F_LOG.warn("ADMIN tried to update a workout with invalid typeOfWorkout");
+                F_LOG.warn("ADMIN tried to update a workout with invalid typeOfWorkout.");
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "TypeofWorkout can not be left blank"
+                        "TypeofWorkout can not be left blank."
                 );
             }
             workoutToUpdate.setTypeOfWorkout(newWorkout.getTypeOfWorkout());
@@ -178,10 +185,10 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         if(newWorkout.getLocation() != null && !newWorkout.getLocation().equals(workoutToUpdate.getLocation())) {
             if(newWorkout.getLocation().isEmpty()) {
-                F_LOG.warn("ADMIN tried to update a workout with invalid location");
+                F_LOG.warn("ADMIN tried to update a workout with invalid location.");
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "location can not be left blank"
+                        "Location can not be left blank."
                 );
             }
             workoutToUpdate.setLocation(newWorkout.getLocation());
@@ -190,11 +197,11 @@ public class WorkoutServiceImpl implements WorkoutService {
         if (newWorkout.getInstructorId() != null && !newWorkout.getInstructorId().equals(workoutToUpdate.getInstructor().getId())){
             Instructor instructor = instructorRepository.findById(newWorkout.getInstructorId())
                     .orElseThrow(() -> {
-                        F_LOG.warn("ADMIN tried to update a workout with a non-existing instructor (id: {})",
+                        F_LOG.warn("ADMIN tried to update a workout with a non-existing instructor (id: {}).",
                                 newWorkout.getInstructorId());
                         return new ResponseStatusException(
                                 HttpStatus.NOT_FOUND,
-                                "Instructor not found"
+                                "Instructor not found."
                         );
                     });
             newMultiplier = true;
@@ -203,10 +210,10 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         if(newWorkout.getMaxParticipants() != null && !newWorkout.getMaxParticipants().equals(workoutToUpdate.getMaxParticipants())) {
             if(newWorkout.getMaxParticipants()==0) {
-                F_LOG.warn("ADMIN tried to update a workout to 0 participants");
+                F_LOG.warn("ADMIN tried to update a workout to 0 participants.");
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "A workout requires at least one participant"
+                        "A workout requires at least one participant."
                 );
             } else {
                 workoutToUpdate.setMaxParticipants(newWorkout.getMaxParticipants());
@@ -231,6 +238,13 @@ public class WorkoutServiceImpl implements WorkoutService {
             }
         }
         if(newWorkout.getDateTime() != null && !newWorkout.getDateTime().equals(workoutToUpdate.getDateTime())) {
+            if (newWorkout.getDateTime().isBefore(LocalDateTime.now())) {
+                F_LOG.warn("ADMIN tried to update a workout with invalid date and time.");
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "A workout requires a date and time that have not already passed."
+                );
+            }
             workoutToUpdate.setDateTime(newWorkout.getDateTime());
             timeChanged = true;
             parts.add("dateTime");
@@ -258,7 +272,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             if(!newWorkout.getCanceled()) {
                 F_LOG.warn("ADMIN tried to un-cancel a canceled workout, that is not allowed.");
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
+                        HttpStatus.CONFLICT,
                         "A canceled workout can not be un-canceled."
                 );
             }
@@ -284,10 +298,9 @@ public class WorkoutServiceImpl implements WorkoutService {
     // ett specificerat tidsintervall (5 år?) och då kan de träningar som var associerade med dem också deletas.
     // Försöker man deleta en träning med bokningar blir den istället automatiskt inställd.
     @Transactional
-    @Override                                   //KLAR?
+    @Override
     public String deleteWorkout(Integer id) {
-        Optional<Workout> optionalWorkout = workoutRepository.findById(id);
-        Workout workout = optionalWorkout.orElseThrow(() -> {
+        Workout workout = workoutRepository.findById(id).orElseThrow(() -> {
             F_LOG.warn("ADMIN tried to delete a workout with id {} that doesn't exist.", id);
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -305,16 +318,15 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Transactional
-                                //KLAR? @Override???
+    @Override
     public String cancelWorkout(Workout workout) {
         if (workout.isCanceled()){
             F_LOG.info("ADMIN tried to canceled a workout with id: {}, but it was already canceled.", workout.getId());
             return String.format("Workout with Id: %s is already canceled.", workout.getId());
         }
-        List<Booking> bookings = workout.getBookings();
-        for (Booking booking : bookings) {
-            booking.setCanceled(true);
-        }
+
+        workout.getBookings().forEach(booking -> booking.setCanceled(true));
+
         workout.setCanceled(true);
         workoutRepository.save(workout);
         F_LOG.info("ADMIN canceled workout with id: {}, and its associated bookings.", workout.getId());
@@ -332,7 +344,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         if (locationUnavailable) {
             F_LOG.warn("ADMIN tried to schedule a workout with an unavailable location.");
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.CONFLICT,
                     "The location is unavailable at that time."
             );
         }
@@ -342,7 +354,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         if(instructorUnavailable) {
             F_LOG.warn("ADMIN tried to schedule a workout with an unavailable instructor.");
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.CONFLICT,
                     "The instructor is not available."
             );
         }
