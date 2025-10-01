@@ -37,7 +37,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> getMyBookings() {
         F_LOG.info("USER retrieved all their bookings.");
-        return bookingRepository.findAllByCustomerUsername((authInfo.getAuthUsername()));
+        return bookingRepository.findAllByCustomerUsernameAndCanceledFalse((authInfo.getAuthUsername()));
     }
 
     @Transactional
@@ -150,6 +150,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> getOldBookings() {
         F_LOG.info("ADMIN retrieved all previous bookings.");
-        return bookingRepository.findByCanceledTrueOrWorkout_DateTimeBefore(LocalDateTime.now());
+        return bookingRepository.findByCanceledFalseAndWorkout_DateTimeBefore(LocalDateTime.now());
     }
 }
