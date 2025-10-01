@@ -37,7 +37,7 @@ public class InstructorServiceImpl implements InstructorService {
 
         if ("ADMIN".equals(role)) {
             instructorViews.addAll(instructors);
-            F_LOG.info("ADMIN displayed the list of all instructors.");
+            F_LOG.info("{} displayed the list of all instructors.", role);
         } else {
             for (Instructor instructor : instructors) {
                 InstructorUserDTO dto = new InstructorUserDTO();
@@ -46,7 +46,7 @@ public class InstructorServiceImpl implements InstructorService {
                 dto.setSpeciality(instructor.getSpeciality());
                 instructorViews.add(dto);
             }
-            F_LOG.info("USER displayed the redacted list of all instructors.");
+            F_LOG.info("{} displayed the redacted list of all instructors.", role);
         }
         return instructorViews;
     }
@@ -54,15 +54,16 @@ public class InstructorServiceImpl implements InstructorService {
     @Transactional
     @Override
     public Instructor addInstructor(Instructor instructor) {
+        String role = authInfo.getRole();
         if(instructor.getName() == null|| instructor.getName().isEmpty()) {
-            F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields.");
+            F_LOG.warn("{} tried to add an instructor with missing or invalid fields.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Name required"
             );
         }
         if (instructor.getSpeciality() == null){
-            F_LOG.warn("ADMIN tried to add an instructor with missing or invalid fields.");
+            F_LOG.warn("{} tried to add an instructor with missing or invalid fields.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Speciality required"
@@ -70,7 +71,7 @@ public class InstructorServiceImpl implements InstructorService {
         }
         instructor.getSpeciality().forEach(s -> s.setInstructor(instructor));
         Instructor savedInstructor = instructorRepository.save(instructor);
-        F_LOG.info("ADMIN added an instructor with id {}.", savedInstructor.getId());
+        F_LOG.info("{} added an instructor with id {}.", role, savedInstructor.getId());
         return savedInstructor;
     }
 }
