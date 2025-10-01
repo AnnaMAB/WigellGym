@@ -44,6 +44,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking makeBooking(Workout workoutToBook) {
         String role = authInfo.getRole();
+        if (workoutToBook.getId() == null) {
+            F_LOG.warn("{} tried to book a workout without providing an id.", role);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Workout id must be provided for booking"
+            );
+        }
         Workout workout = workoutRepository.findById(workoutToBook.getId()).orElseThrow(() -> {
             F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
             return new ResponseStatusException(
@@ -102,6 +109,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking cancelBooking(Booking bookingToCancel) {
         String role = authInfo.getRole();
+        if (bookingToCancel.getId() == null) {
+            F_LOG.warn("{} tried to cancel a booking without providing an id.", role);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Booking id must be provided for cancellation"
+            );
+        }
         Booking booking = bookingRepository.findById(bookingToCancel.getId()).orElseThrow(() -> {
             F_LOG.warn("{} tried to cancel a booking with id {} that doesn't exist.", role, bookingToCancel.getId());
             return new ResponseStatusException(

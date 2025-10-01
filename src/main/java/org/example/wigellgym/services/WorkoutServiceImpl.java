@@ -148,7 +148,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     public Workout updateWorkout(WorkoutDTO newWorkout) {
         String role = authInfo.getRole();
         if (newWorkout.getId() == null) {
-            F_LOG.warn("{} tried to update a workout without providing an id.", role);
+            F_LOG.warn("{} tried to update a workout without an id.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Workout id must be provided for update"
@@ -324,13 +324,20 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         workoutRepository.deleteById(id);
         F_LOG.info("{} deleted workout with id: {}", role , id);
-        return String.format("Workout with Id: %s has been successfully deleted.", role, id);
+        return String.format("Workout with Id: %s has been successfully deleted.", id);
     }
 
 
     @Transactional
     @Override
     public String cancelWorkout(Workout workout) {
+        if (workout.getId() == null) {
+            F_LOG.warn("{} tried to cancel a workout without an id.", authInfo.getRole());
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Workout id must be provided for cancellation"
+            );
+        }
         if (workout.isCanceled()){
             F_LOG.info("{} tried to canceled a workout with id: {}, but it was already canceled.", authInfo.getRole(), workout.getId());
             return String.format("Workout with Id: %s is already canceled.", workout.getId());
