@@ -10,35 +10,34 @@ INSERT INTO speciality (type, certificate_level, instructor_id) VALUES ('Styrke'
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Yin Yoga', 'Yoga', 2, 'Stora salen', 22, 20, 338, '2025-06-28 17:00:00', '2025-06-28 17:45:00', false);
+VALUES ('Yin Yoga', 'Yoga', 2, 'Stora salen', 22, 20, 337.50, '2025-06-28 17:00:00', '2025-06-28 17:45:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Hantlar', 'Styrke', 3, 'Lilla salen', 12, 10, 338, '2025-06-28 18:00:00', '2025-06-28 18:45:00', false);
+VALUES ('Hantlar', 'Styrke', 3, 'Lilla salen', 12, 10, 337.50, '2025-06-28 18:00:00', '2025-06-28 18:45:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Fun run', 'Cardio', 1, 'Ute', 12, 10, 315, '2025-09-12 18:30:00', '2025-09-12 19:15:00', false);
+VALUES ('Fun run', 'Cardio', 1, 'Ute', 12, 10, 315.00, '2025-09-12 18:30:00', '2025-09-12 19:15:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Fun run', 'Cardio', 1, 'Ute', 12, 10, 210, '2025-10-22 16:15:00', '2025-10-22 16:45:00', false);
+VALUES ('Fun run', 'Cardio', 1, 'Ute', 12, 10, 210.00, '2025-10-22 16:15:00', '2025-10-22 16:45:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Hatha Yoga', 'Yoga', 2, 'Stora salen', 22, 20, 450, '2025-11-28 17:00:00', '2025-11-28 17:45:00', false);
+VALUES ('Hatha Yoga', 'Yoga', 2, 'Stora salen', 22, 20, 450.00, '2025-11-28 17:00:00', '2025-11-28 17:45:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Power lift', 'Styrke', 3, 'Lilla salen', 12, 10, 450, '2025-10-26 17:30:00', '2025-10-26 18:15:00', false);
+VALUES ('Power lift', 'Styrke', 3, 'Lilla salen', 12, 10, 450.00, '2025-10-26 17:30:00', '2025-10-26 18:15:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Obokad uppcoming', 'Test pass', 3, 'Lilla salen', 12, 10, 480, '2025-10-27 17:30:00', '2025-10-27 18:30:00', false);
+VALUES ('Obokad uppcoming', 'Test pass', 3, 'Lilla salen', 12, 10, 480.00, '2025-10-27 17:30:00', '2025-10-27 18:30:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Obokad passed', 'Test pass', 3, 'Lilla salen', 12, 10, 160, '2025-08-28 17:30:00', '2025-08-28 17:50:00', false);
+VALUES ('Obokad passed', 'Test pass', 3, 'Lilla salen', 12, 10, 160.00, '2025-08-28 17:30:00', '2025-08-28 17:50:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Obokad idag toSoon', 'Test pass', 3, 'Lilla salen', 12, 10, 480, '2025-09-30 12:30:00', '2025-09-30 13:30:00', false);
+VALUES ('Obokad idag toSoon', 'Test pass', 3, 'Lilla salen', 12, 10, 480.00, '2025-09-30 12:30:00', '2025-09-30 13:30:00', false);
 
 INSERT INTO workout (name, type_of_workout, instructor_id, location, max_participants, free_spots, price_sek, date_time, end_time, canceled)
-VALUES ('Obokad idag ikväll', 'Test pass', 3, 'Lilla salen', 12, 10, 480, '2025-09-30 17:30:00', '2025-09-30 18:30:00', false);
-
+VALUES ('Obokad idag ikväll', 'Test pass', 3, 'Lilla salen', 12, 10, 480.00, '2025-09-30 17:30:00', '2025-09-30 18:30:00', false);
 
 ----------1---------------
 INSERT INTO gym_booking (booking_date, customer_username, workout_id, total_price_sek, total_price_euro, canceled)
