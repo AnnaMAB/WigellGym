@@ -31,10 +31,6 @@ public class Workout {
     private Integer freeSpots;
     @Column(nullable = false)
     private Double priceSek;
-    @Column
-    private Double instructorSkillPriceMultiplier;
-    @Column(nullable = false)
-    private Double basePricePerHourSek;
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dateTime;
@@ -48,7 +44,6 @@ public class Workout {
     private boolean canceled = false;
 
     public Workout() {
-
     }
 
     public Integer getId() {
@@ -115,14 +110,6 @@ public class Workout {
         this.priceSek = priceSEK;
     }
 
-    public Double getBasePricePerHourSek() {
-        return basePricePerHourSek;
-    }
-
-    public void setBasePricePerHourSek(Double basePricePerHourSek) {
-        this.basePricePerHourSek = basePricePerHourSek;
-    }
-
     public LocalDateTime getDateTime() {
         return dateTime;
     }
@@ -137,14 +124,6 @@ public class Workout {
 
     public void setBookings(List<Booking> bookings) {
         this.bookings = bookings;
-    }
-
-    public Double getInstructorSkillPriceMultiplier() {
-        return instructorSkillPriceMultiplier;
-    }
-
-    public void setInstructorSkillPriceMultiplier(Double instructorSkillPriceMultiplier) {
-        this.instructorSkillPriceMultiplier = instructorSkillPriceMultiplier;
     }
 
     public boolean isCanceled() {
@@ -174,8 +153,6 @@ public class Workout {
                 ", maxParticipants=" + maxParticipants +
                 ", freeSpots=" + freeSpots +
                 ", priceSek=" + priceSek +
-                ", instructorSkillPriceMultiplier=" + instructorSkillPriceMultiplier +
-                ", basePricePerHourSek=" + basePricePerHourSek +
                 ", dateTime=" + dateTime +
                 ", endTime=" + endTime +
                 ", bookings=" + bookings +

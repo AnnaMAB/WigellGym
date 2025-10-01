@@ -106,7 +106,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout requires a duration in minutes."
             );
         }
-        if(workoutDto.getCanceled() != null && workoutDto.getCanceled() == true) {
+        if(workoutDto.getCanceled() != null && workoutDto.getCanceled()) {
             F_LOG.warn("ADMIN tried to add a workout that's canceled from the start.");
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -129,10 +129,8 @@ public class WorkoutServiceImpl implements WorkoutService {
         newWorkout.setMaxParticipants(workoutDto.getMaxParticipants());
         newWorkout.setDateTime(workoutDto.getDateTime());
         newWorkout.setEndTime(workoutDto.getDateTime().plusMinutes(workoutDto.getDurationInMinutes()));
-        newWorkout.setInstructorSkillPriceMultiplier(getMultiplier(instructor, workoutDto.getTypeOfWorkout()));
-        newWorkout.setBasePricePerHourSek(workoutDto.getBasePricePerHourSek());
         newWorkout.setPriceSek(
-                ((workoutDto.getBasePricePerHourSek() * newWorkout.getInstructorSkillPriceMultiplier()) /60.0 )
+                ((workoutDto.getBasePricePerHourSek() * getMultiplier(instructor, workoutDto.getTypeOfWorkout())) /60.0 )
                         * workoutDto.getDurationInMinutes());
         newWorkout.setFreeSpots(newWorkout.getMaxParticipants());
         checkAvailability(newWorkout);
@@ -158,7 +156,17 @@ public class WorkoutServiceImpl implements WorkoutService {
                     String.format("No workout exists with id: %d.", newWorkout.getId())
             );
         });
+
+        Long duration = Duration.between(workoutToUpdate.getDateTime(), workoutToUpdate.getEndTime()).toMinutes();
+        Double skillMultiplier = getMultiplier(workoutToUpdate.getInstructor(), workoutToUpdate.getTypeOfWorkout());
+        Double basePricePerHourSek = (workoutToUpdate.getPriceSek()*60)/(duration* skillMultiplier);
+
+        boolean timeChanged = false;
+        boolean newPriceCalc = false;
+        boolean newMultiplier = false;
+
         List<String> parts = new ArrayList<>();
+
         if (newWorkout.getName() != null && !newWorkout.getName().equals(workoutToUpdate.getName())) {
             if(newWorkout.getName().isEmpty()) {
                 F_LOG.warn("ADMIN tried to update a workout with invalid name.");
@@ -170,7 +178,6 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setName(newWorkout.getName());
             parts.add("name");
         }
-        Boolean newMultiplier = false;
         if(newWorkout.getTypeOfWorkout() != null && !newWorkout.getTypeOfWorkout().equals(workoutToUpdate.getTypeOfWorkout())){
             if(newWorkout.getTypeOfWorkout().isEmpty()) {
                 F_LOG.warn("ADMIN tried to update a workout with invalid typeOfWorkout.");
@@ -220,10 +227,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 parts.add("maxParticipants");
             }
         }
-        Long duration = Duration.between(workoutToUpdate.getDateTime(), workoutToUpdate.getEndTime()).toMinutes();
-        boolean timeChanged = false;
-        Boolean newPriceCalc = false;
-        if(newWorkout.getDurationInMinutes() != null && newWorkout.getDurationInMinutes() != duration) {
+        if(newWorkout.getDurationInMinutes() != null && !newWorkout.getDurationInMinutes().equals(duration)) {
             if(newWorkout.getDurationInMinutes()==0) {
                 F_LOG.warn("ADMIN tried to update a workout with missing or invalid duration.");
                 throw new ResponseStatusException(
@@ -253,18 +257,18 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setEndTime(workoutToUpdate.getDateTime().plusMinutes(duration));
             parts.add("endTime");
         }
-        if (newWorkout.getBasePricePerHourSek() != null && !newWorkout.getBasePricePerHourSek().equals(workoutToUpdate.getBasePricePerHourSek())){
+        if (newWorkout.getBasePricePerHourSek() != null && !newWorkout.getBasePricePerHourSek().equals(basePricePerHourSek)){
+            basePricePerHourSek = newWorkout.getBasePricePerHourSek();
             newPriceCalc = true;
-            workoutToUpdate.setBasePricePerHourSek(newWorkout.getBasePricePerHourSek());
             parts.add("basePricePerHourSek");
         }
         if (newMultiplier) {
-            workoutToUpdate.setInstructorSkillPriceMultiplier(getMultiplier(workoutToUpdate.getInstructor(), workoutToUpdate.getTypeOfWorkout()));
+            skillMultiplier = getMultiplier(workoutToUpdate.getInstructor(), workoutToUpdate.getTypeOfWorkout());
             newPriceCalc = true;
         }
         if (newPriceCalc) {
             workoutToUpdate.setPriceSek(
-                    ((workoutToUpdate.getBasePricePerHourSek() * workoutToUpdate.getInstructorSkillPriceMultiplier()) / 60.0)
+                    ((basePricePerHourSek * skillMultiplier) / 60.0)
                             * duration);
             parts.add("calculated price");
         }
