@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.wigellgym.configs.AuthInfo;
+import org.example.wigellgym.dto.BookingDTO;
 import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Workout;
 import org.example.wigellgym.repositories.BookingRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,25 +26,35 @@ public class BookingServiceImpl implements BookingService {
     private final ConversionServiceImpl conversionService;
     private final AuthInfo authInfo;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
+    private final WorkoutServiceImpl workoutService;
 
     @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository, ConversionServiceImpl conversionService, AuthInfo authInfo) {
+    public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository,
+                              ConversionServiceImpl conversionService, AuthInfo authInfo, WorkoutServiceImpl workoutService) {
         this.conversionService = conversionService;
         this.bookingRepository = bookingRepository;
         this.workoutRepository = workoutRepository;
         this.authInfo = authInfo;
+        this.workoutService = workoutService;
     }
 
 
     @Override
-    public List<Booking> getMyBookings() {
+    public List<BookingDTO> getMyBookings() {
+
+        List<Booking> fullBookings = bookingRepository.findAllByCustomerUsernameAndCanceledFalse((authInfo.getAuthUsername()));
+        List<BookingDTO> bookingDTOs = new ArrayList<>();
+        for (Booking booking : fullBookings) {
+            BookingDTO dto = makeBookingDTO(booking);
+            bookingDTOs.add(dto);
+        }
         F_LOG.info("{} retrieved all their bookings.", authInfo.getRole());
-        return bookingRepository.findAllByCustomerUsernameAndCanceledFalse((authInfo.getAuthUsername()));
+        return bookingDTOs;
     }
 
     @Transactional
     @Override
-    public Booking makeBooking(Workout workoutToBook) {
+    public BookingDTO makeBooking(Workout workoutToBook) {
         String role = authInfo.getRole();
         if (workoutToBook.getId() == null) {
             F_LOG.warn("{} tried to book a workout without providing an id.", role);
@@ -102,12 +114,12 @@ public class BookingServiceImpl implements BookingService {
         workout.getBookings().add(savedBooking);
         workoutRepository.save(workout);
         F_LOG.info("{} made a booking, with id {}, for workout with id {}.", role, savedBooking.getId(), workout.getId());
-        return savedBooking;
+        return makeBookingDTO(savedBooking);
     }
 
     @Transactional
     @Override
-    public Booking cancelBooking(Booking bookingToCancel) {
+    public BookingDTO cancelBooking(Booking bookingToCancel) {
         String role = authInfo.getRole();
         if (bookingToCancel.getId() == null) {
             F_LOG.warn("{} tried to cancel a booking without providing an id.", role);
@@ -148,24 +160,56 @@ public class BookingServiceImpl implements BookingService {
         booking.setTotalPriceEuro(0.0);
         booking.setTotalPriceSek(0.0);
         F_LOG.info("{} canceled booking with id {} for workout {}.", role, booking.getId(), booking.getWorkout().getId());
-        return bookingRepository.save(booking);
+        bookingRepository.save(booking);
+        return makeBookingDTO(booking);
     }
 
     @Override
-    public List<Booking> getCanceledBookings() {
+    public List<BookingDTO> getCanceledBookings() {
+        List<Booking> fullBookings = bookingRepository.findByCanceledTrue();
+        List<BookingDTO> bookingDTOs = new ArrayList<>();
+        for (Booking booking : fullBookings) {
+            BookingDTO dto = makeBookingDTO(booking);
+            bookingDTOs.add(dto);
+        }
         F_LOG.info("{} retrieved all canceled bookings.", authInfo.getRole());
-        return bookingRepository.findByCanceledTrue();
+        return bookingDTOs;
     }
 
     @Override
-    public List<Booking> getUpcomingBookings() {
+    public List<BookingDTO> getUpcomingBookings() {
+        List<Booking> fullBookings = bookingRepository.findByCanceledFalseAndWorkout_DateTimeGreaterThanEqual(LocalDateTime.now());
+        List<BookingDTO> bookingDTOs = new ArrayList<>();
+        for (Booking booking : fullBookings) {
+            BookingDTO dto = makeBookingDTO(booking);
+            bookingDTOs.add(dto);
+        }
         F_LOG.info("{} retrieved all upcoming bookings.", authInfo.getRole());
-        return bookingRepository.findByCanceledFalseAndWorkout_DateTimeGreaterThanEqual(LocalDateTime.now());
+        return bookingDTOs;
     }
 
     @Override
-    public List<Booking> getOldBookings() {
+    public List<BookingDTO> getOldBookings() {
+        List<Booking> fullBookings = bookingRepository.findByCanceledFalseAndWorkout_DateTimeBefore(LocalDateTime.now());
+        List<BookingDTO> bookingDTOs = new ArrayList<>();
+        for (Booking booking : fullBookings) {
+            BookingDTO dto = makeBookingDTO(booking);
+            bookingDTOs.add(dto);
+        }
         F_LOG.info("{} retrieved all previous bookings.", authInfo.getRole());
-        return bookingRepository.findByCanceledFalseAndWorkout_DateTimeBefore(LocalDateTime.now());
+        return bookingDTOs;
     }
+
+    public BookingDTO makeBookingDTO(Booking booking) {
+        BookingDTO dto = new BookingDTO();
+        dto.setId(booking.getId());
+        dto.setCustomerUsername(booking.getCustomerUsername());
+        dto.setCanceled(booking.isCanceled());
+        dto.setTotalPriceSek(booking.getTotalPriceSek());
+        dto.setTotalPriceEuro(booking.getTotalPriceEuro());
+        dto.setBookingDate(booking.getBookingDate());
+        dto.setWorkoutDTO(workoutService.makeWorkoutDTO(booking.getWorkout()));
+        return dto;
+    }
+
 }

@@ -1,5 +1,6 @@
 package org.example.wigellgym.controller;
 
+import org.example.wigellgym.dto.BookingDTO;
 import org.example.wigellgym.dto.WorkoutDTO;
 import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Instructor;
@@ -31,19 +32,19 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listcanceled")
-    public ResponseEntity<List<Booking>> listCanceledBookings() {
+    public ResponseEntity<List<BookingDTO>> listCanceledBookings() {
         return ResponseEntity.ok(bookingService.getCanceledBookings());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listupcoming")
-    public ResponseEntity<List<Booking>> listUpcomingBookings() {
+    public ResponseEntity<List<BookingDTO>> listUpcomingBookings() {
         return ResponseEntity.ok(bookingService.getUpcomingBookings());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listpast")
-    public ResponseEntity<List<Booking>> listPastBookings() {
+    public ResponseEntity<List<BookingDTO>> listPastBookings() {
         return ResponseEntity.ok(bookingService.getOldBookings());
     }
 

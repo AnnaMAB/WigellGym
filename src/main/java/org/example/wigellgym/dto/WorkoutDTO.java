@@ -10,11 +10,13 @@ public class WorkoutDTO {
         private String name;
         private String typeOfWorkout;
         private String location;
-        private Integer instructorId;
+        private InstructorDTO instructorDTO;
         private Integer maxParticipants;
         private Double basePricePerHourSek;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         private LocalDateTime dateTime;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        private LocalDateTime endTime;
         private Long durationInMinutes;
         private Boolean canceled;
 
@@ -54,12 +56,12 @@ public class WorkoutDTO {
                 this.location = location;
         }
 
-        public Integer getInstructorId() {
-                return instructorId;
+        public InstructorDTO getInstructorUserDTO() {
+                return instructorDTO;
         }
 
-        public void setInstructorId(Integer instructorId) {
-                this.instructorId = instructorId;
+        public void setInstructorUserDTO(InstructorDTO instructorDTO) {
+                this.instructorDTO = instructorDTO;
         }
 
         public Integer getMaxParticipants() {
@@ -102,6 +104,14 @@ public class WorkoutDTO {
                 this.durationInMinutes = durationInMinutes;
         }
 
+        public LocalDateTime getEndTime() {
+                return endTime;
+        }
+
+        public void setEndTime(LocalDateTime endTime) {
+                this.endTime = endTime;
+        }
+
         @Override
         public String toString() {
                 return "WorkoutDTO{" +
@@ -109,11 +119,12 @@ public class WorkoutDTO {
                         ", name='" + name + '\'' +
                         ", typeOfWorkout='" + typeOfWorkout + '\'' +
                         ", location='" + location + '\'' +
-                        ", instructorId=" + instructorId +
+                        ", instructorDTO=" + instructorDTO +
                         ", maxParticipants=" + maxParticipants +
                         ", basePricePerHourSek=" + basePricePerHourSek +
                         ", dateTime=" + dateTime +
-                        ", lengthInMinutes=" + durationInMinutes +
+                        ", endTime=" + endTime +
+                        ", durationInMinutes=" + durationInMinutes +
                         ", canceled=" + canceled +
                         '}';
         }

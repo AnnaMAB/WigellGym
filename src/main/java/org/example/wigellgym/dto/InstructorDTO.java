@@ -5,13 +5,13 @@ import org.example.wigellgym.entities.Speciality;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstructorUserDTO implements InstructorView{
+public class InstructorDTO implements InstructorView{
 
-    private int id;
+    private Integer id;
     private String name;
     private List<Speciality> speciality = new ArrayList<>();
 
-    public InstructorUserDTO() {
+    public InstructorDTO() {
 
     }
 
@@ -31,17 +31,17 @@ public class InstructorUserDTO implements InstructorView{
         this.speciality = speciality;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     @Override
     public String toString() {
-        return "InstructorUserDTO{" +
+        return "InstructorDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", speciality=" + speciality +

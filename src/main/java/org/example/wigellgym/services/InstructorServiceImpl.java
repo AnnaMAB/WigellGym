@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.wigellgym.configs.AuthInfo;
-import org.example.wigellgym.dto.InstructorUserDTO;
+import org.example.wigellgym.dto.InstructorDTO;
 import org.example.wigellgym.dto.InstructorView;
 import org.example.wigellgym.entities.Instructor;
 import org.example.wigellgym.repositories.InstructorRepository;
@@ -40,11 +40,7 @@ public class InstructorServiceImpl implements InstructorService {
             F_LOG.info("{} displayed the list of all instructors.", role);
         } else {
             for (Instructor instructor : instructors) {
-                InstructorUserDTO dto = new InstructorUserDTO();
-                dto.setId(instructor.getId());
-                dto.setName(instructor.getName());
-                dto.setSpeciality(instructor.getSpeciality());
-                instructorViews.add(dto);
+                instructorViews.add(makeInstructorDTO(instructor));
             }
             F_LOG.info("{} displayed the redacted list of all instructors.", role);
         }
@@ -62,16 +58,20 @@ public class InstructorServiceImpl implements InstructorService {
                     "Name required"
             );
         }
-        if (instructor.getSpeciality() == null){
-            F_LOG.warn("{} tried to add an instructor with missing or invalid fields.", role);
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Speciality required"
-            );
+        if (!instructor.getSpeciality().isEmpty()) {            //En tom Speciality-lista skapas alltid
+            instructor.getSpeciality().forEach(s -> s.setInstructor(instructor));
         }
-        instructor.getSpeciality().forEach(s -> s.setInstructor(instructor));
         Instructor savedInstructor = instructorRepository.save(instructor);
         F_LOG.info("{} added an instructor with id {}.", role, savedInstructor.getId());
         return savedInstructor;
     }
+
+    public InstructorDTO makeInstructorDTO(Instructor instructor) {
+        InstructorDTO dto = new InstructorDTO();
+        dto.setId(instructor.getId());
+        dto.setName(instructor.getName());
+        dto.setSpeciality(instructor.getSpeciality());
+        return dto;
+    }
+
 }

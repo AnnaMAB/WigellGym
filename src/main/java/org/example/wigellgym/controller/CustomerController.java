@@ -1,5 +1,6 @@
 package org.example.wigellgym.controller;
 
+import org.example.wigellgym.dto.BookingDTO;
 import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Workout;
 import org.example.wigellgym.services.BookingServiceImpl;
@@ -35,19 +36,19 @@ public class CustomerController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/mybookings")
-    public ResponseEntity<List<Booking>> getCustomerBookings() {
+    public ResponseEntity<List<BookingDTO>> getCustomerBookings() {
         return ResponseEntity.ok(bookingService.getMyBookings());
     }
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/bookworkout")
-    public ResponseEntity<Booking> bookWorkout(@RequestBody Workout workoutToBook) {
+    public ResponseEntity<BookingDTO> bookWorkout(@RequestBody Workout workoutToBook) {
         return ResponseEntity.ok(bookingService.makeBooking(workoutToBook));
     }
 
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/cancelworkout")
-    public ResponseEntity<Booking> cancelBooking(@RequestBody Booking booking) {
+    public ResponseEntity<BookingDTO> cancelBooking(@RequestBody Booking booking) {
         return ResponseEntity.ok(bookingService.cancelBooking(booking));
     }
 

@@ -27,12 +27,14 @@ public class WorkoutServiceImpl implements WorkoutService {
     private final InstructorRepository instructorRepository;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
     private final AuthInfo authInfo;
+    private final InstructorServiceImpl instructorService;
 
     @Autowired
-    public WorkoutServiceImpl(WorkoutRepository workoutRepository, InstructorRepository instructorRepository, AuthInfo authInfo) {
+    public WorkoutServiceImpl(WorkoutRepository workoutRepository, InstructorRepository instructorRepository, AuthInfo authInfo, InstructorServiceImpl instructorService) {
         this.workoutRepository = workoutRepository;
         this.instructorRepository = instructorRepository;
         this.authInfo = authInfo;
+        this.instructorService = instructorService;
     }
 
     @Override
@@ -75,7 +77,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "Location required."
             );
         }
-        if (workoutDto.getInstructorId() == null){
+        if (workoutDto.getInstructorUserDTO() == null){
             F_LOG.warn("{} tried to add a workout missing instructor.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -117,10 +119,10 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout can not be created as canceled."
             );
         }
-        Instructor instructor = instructorRepository.findById(workoutDto.getInstructorId())
+        Instructor instructor = instructorRepository.findById(workoutDto.getInstructorUserDTO().getId())
                 .orElseThrow(() -> {
                     F_LOG.warn("{} tried to add a workout with a non-existing instructor (id: {})", role,
-                            workoutDto.getInstructorId());
+                            workoutDto.getInstructorUserDTO());
                     return new ResponseStatusException(
                             HttpStatus.NOT_FOUND,
                             "Instructor not found."
@@ -206,11 +208,11 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setLocation(newWorkout.getLocation());
             parts.add("location");
         }
-        if (newWorkout.getInstructorId() != null && !newWorkout.getInstructorId().equals(workoutToUpdate.getInstructor().getId())){
-            Instructor instructor = instructorRepository.findById(newWorkout.getInstructorId())
+        if (newWorkout.getInstructorUserDTO() != null && !newWorkout.getInstructorUserDTO().getId().equals((workoutToUpdate.getInstructor().getId()))){
+            Instructor instructor = instructorRepository.findById(newWorkout.getInstructorUserDTO().getId())
                     .orElseThrow(() -> {
                         F_LOG.warn("{} tried to update a workout with a non-existing instructor (id: {}).", role,
-                                newWorkout.getInstructorId());
+                                newWorkout.getInstructorUserDTO());
                         return new ResponseStatusException(
                                 HttpStatus.NOT_FOUND,
                                 "Instructor not found."
@@ -390,6 +392,21 @@ public class WorkoutServiceImpl implements WorkoutService {
             }
         }
         return toReturn;
+    }
+
+    public WorkoutDTO makeWorkoutDTO(Workout workout) {
+        WorkoutDTO dto = new WorkoutDTO();
+        dto.setId(workout.getId());
+        dto.setName(workout.getName());
+        dto.setTypeOfWorkout(workout.getTypeOfWorkout());
+        dto.setLocation(workout.getLocation());
+        dto.setInstructorUserDTO(instructorService.makeInstructorDTO(workout.getInstructor()));
+        dto.setMaxParticipants(workout.getMaxParticipants());
+        dto.setDateTime(workout.getDateTime());
+        dto.setEndTime(workout.getEndTime());
+        dto.setCanceled(workout.isCanceled());
+
+        return dto;
     }
 
 }

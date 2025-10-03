@@ -22,7 +22,6 @@ public class CommonController {
     @Autowired
     public CommonController(InstructorServiceImpl instructorService) {
         this.instructorService = instructorService;
-
     }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
