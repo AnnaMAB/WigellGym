@@ -2,7 +2,9 @@ package org.example.wigellgym.services;
 
 import org.apache.logging.log4j.Logger;
 import org.example.wigellgym.configs.AuthInfo;
+import org.example.wigellgym.dto.InstructorDTO;
 import org.example.wigellgym.entities.Instructor;
+import org.example.wigellgym.entities.Speciality;
 import org.example.wigellgym.repositories.InstructorRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
 
 @ExtendWith(MockitoExtension.class)
 class InstructorServiceImplTest {
@@ -22,8 +25,8 @@ class InstructorServiceImplTest {
     private InstructorRepository instructorRepositoryMock;
     @Mock
     private AuthInfo authInfoMock;
-    @Mock
-    private Logger loggerMock;
+
+    private List<Instructor> instructors;
 
     private Instructor instructor;
 
@@ -33,8 +36,27 @@ class InstructorServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        instructor = new Instructor();
+        Instructor kalle = new Instructor("Kalle", "är en kanin");
+        kalle.setId(1);
 
+        Speciality yoga = new Speciality();
+        yoga.setType("Yoga");
+        yoga.setCertificateLevel(4);
+
+        kalle.getSpeciality().add(yoga);
+
+
+        Instructor puh = new Instructor("Puh", "gillar honung");
+        puh.setId(2);
+
+        Speciality cardio = new Speciality();
+        cardio.setType("Cardio");
+        cardio.setCertificateLevel(2);
+
+        puh.getSpeciality().add(cardio);
+
+        instructors.add(kalle);
+        instructors.add(puh);
     }
 
     @AfterEach
@@ -42,17 +64,33 @@ class InstructorServiceImplTest {
     }
 
     @Test
-    void getInstructors() {
+    void getInstructors_IfAdminShouldReturnAllInstructors() {
+        // Given
+
+        // When
+
+        // Then
+    }
+
+    @Test
+    void getInstructors_IfUserShouldReturnAllInstructorDTOs() {
     }
 
     @Test
     void addInstructor_ShouldSaveAndReturnInstructor (Instructor instructor) {
     }
+
+    @Test
+    void addInstructor_ShouldAddSpecialityListEvenIfNotExplicitlyAdded(Instructor instructor) {
+    }
+
     @Test
     void addInstructor_ShouldTrowExceptionWhenNameIsNull (Instructor instructor) {
     }
 
     @Test
-    void addInstructor_ShouldTrowExceptionWhenNameIsNull () {
+    void makeInstructorDTO_ShouldCopyInstructorAndReturnInstructorDTO (Instructor instructor) {
     }
+
+
 }
