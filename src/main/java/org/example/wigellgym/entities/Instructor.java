@@ -20,13 +20,18 @@ public class Instructor implements InstructorView {
     private String secretInfo;
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"instructor", "priceSEK", "preliminaryPriceEuro", "typeOfWorkout","maxParticipants", "bookings", "freeSpots"})
-    private List<Workout> workouts;
+    private List<Workout> workouts = new ArrayList<>();
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Speciality> speciality = new ArrayList<>();
 
 
     public Instructor() {
 
+    }
+
+    public Instructor(String name, String secretInfo) {
+        this.name = name;
+        this.secretInfo = secretInfo;
     }
 
     public Integer getId() {

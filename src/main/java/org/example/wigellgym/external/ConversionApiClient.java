@@ -1,4 +1,4 @@
-package org.example.wigellgym.services;
+package org.example.wigellgym.external;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -6,13 +6,13 @@ import org.example.wigellgym.configs.AuthInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 
-@Service
-public class ConversionServiceImpl implements ConversionService {
+@Component
+public class ConversionApiClient {
 
     private final RestClient restClient;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
@@ -21,13 +21,11 @@ public class ConversionServiceImpl implements ConversionService {
     private final AuthInfo authInfo;
 
     @Autowired
-    public ConversionServiceImpl(RestClient.Builder restClientBuilder, AuthInfo authInfo) {
+    public ConversionApiClient(RestClient.Builder restClientBuilder, AuthInfo authInfo) {
         this.restClient = restClientBuilder.build();
         this.authInfo = authInfo;
     }
 
-
-    @Override
     public Double getConversionRate() {
         String role = authInfo.getRole();
         try {

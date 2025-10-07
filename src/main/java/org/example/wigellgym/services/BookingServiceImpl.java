@@ -5,8 +5,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.wigellgym.configs.AuthInfo;
 import org.example.wigellgym.dto.BookingDTO;
+import org.example.wigellgym.dto.WorkoutDTO;
 import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Workout;
+import org.example.wigellgym.external.ConversionApiClient;
 import org.example.wigellgym.repositories.BookingRepository;
 import org.example.wigellgym.repositories.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,14 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final WorkoutRepository workoutRepository;
-    private final ConversionServiceImpl conversionService;
+    private final ConversionApiClient conversionService;
     private final AuthInfo authInfo;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
     private final WorkoutServiceImpl workoutService;
 
     @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository,
-                              ConversionServiceImpl conversionService, AuthInfo authInfo, WorkoutServiceImpl workoutService) {
+                              ConversionApiClient conversionService, AuthInfo authInfo, WorkoutServiceImpl workoutService) {
         this.conversionService = conversionService;
         this.bookingRepository = bookingRepository;
         this.workoutRepository = workoutRepository;
@@ -54,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingDTO makeBooking(Workout workoutToBook) {
+    public BookingDTO makeBooking(WorkoutDTO workoutToBook) {
         String role = authInfo.getRole();
         if (workoutToBook.getId() == null) {
             F_LOG.warn("{} tried to book a workout without providing an id.", role);
@@ -119,7 +121,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingDTO cancelBooking(Booking bookingToCancel) {
+    public BookingDTO cancelBooking(BookingDTO bookingToCancel) {
         String role = authInfo.getRole();
         if (bookingToCancel.getId() == null) {
             F_LOG.warn("{} tried to cancel a booking without providing an id.", role);
