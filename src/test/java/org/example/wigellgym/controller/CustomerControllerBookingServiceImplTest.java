@@ -93,10 +93,6 @@ class CustomerControllerBookingServiceImplTest {
         workout.setCanceled(false);
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
 
     @Test
     void bookWorkout_ShouldAddBookingForWorkout () throws Exception {
