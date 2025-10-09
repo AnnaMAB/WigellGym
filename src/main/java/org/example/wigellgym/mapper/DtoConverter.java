@@ -27,7 +27,7 @@ public class DtoConverter {
         dto.setName(workout.getName());
         dto.setTypeOfWorkout(workout.getTypeOfWorkout());
         dto.setLocation(workout.getLocation());
-        dto.setInstructorUserDTO(makeInstructorDTO(workout.getInstructor()));
+        dto.setInstructorDTO(makeInstructorDTO(workout.getInstructor()));
         dto.setMaxParticipants(workout.getMaxParticipants());
         dto.setDateTime(workout.getDateTime());
         dto.setEndTime(workout.getEndTime());

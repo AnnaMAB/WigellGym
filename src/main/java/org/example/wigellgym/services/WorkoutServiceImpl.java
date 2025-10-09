@@ -76,7 +76,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "Location required."
             );
         }
-        if (workoutDto.getInstructorUserDTO() == null){
+        if (workoutDto.getInstructorDTO() == null){
             F_LOG.warn("{} tried to add a workout missing instructor.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -118,10 +118,10 @@ public class WorkoutServiceImpl implements WorkoutService {
                     "A workout can not be created as canceled."
             );
         }
-        Instructor instructor = instructorRepository.findById(workoutDto.getInstructorUserDTO().getId())
+        Instructor instructor = instructorRepository.findById(workoutDto.getInstructorDTO().getId())
                 .orElseThrow(() -> {
                     F_LOG.warn("{} tried to add a workout with a non-existing instructor (id: {})", role,
-                            workoutDto.getInstructorUserDTO());
+                            workoutDto.getInstructorDTO());
                     return new ResponseStatusException(
                             HttpStatus.NOT_FOUND,
                             "Instructor not found."
@@ -207,11 +207,11 @@ public class WorkoutServiceImpl implements WorkoutService {
             workoutToUpdate.setLocation(newWorkout.getLocation());
             parts.add("location");
         }
-        if (newWorkout.getInstructorUserDTO() != null && !newWorkout.getInstructorUserDTO().getId().equals((workoutToUpdate.getInstructor().getId()))){
-            Instructor instructor = instructorRepository.findById(newWorkout.getInstructorUserDTO().getId())
+        if (newWorkout.getInstructorDTO() != null && !newWorkout.getInstructorDTO().getId().equals((workoutToUpdate.getInstructor().getId()))){
+            Instructor instructor = instructorRepository.findById(newWorkout.getInstructorDTO().getId())
                     .orElseThrow(() -> {
                         F_LOG.warn("{} tried to update a workout with a non-existing instructor (id: {}).", role,
-                                newWorkout.getInstructorUserDTO());
+                                newWorkout.getInstructorDTO());
                         return new ResponseStatusException(
                                 HttpStatus.NOT_FOUND,
                                 "Instructor not found."
