@@ -9,6 +9,7 @@ import org.example.wigellgym.dto.WorkoutDTO;
 import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Workout;
 import org.example.wigellgym.external.ConversionApiClient;
+import org.example.wigellgym.mapper.DtoConverter;
 import org.example.wigellgym.repositories.BookingRepository;
 import org.example.wigellgym.repositories.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +29,16 @@ public class BookingServiceImpl implements BookingService {
     private final ConversionApiClient conversionService;
     private final AuthInfo authInfo;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
-    private final WorkoutServiceImpl workoutService;
+    private final DtoConverter dtoConverter;
 
     @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, WorkoutRepository workoutRepository,
-                              ConversionApiClient conversionService, AuthInfo authInfo, WorkoutServiceImpl workoutService) {
+                              ConversionApiClient conversionService, AuthInfo authInfo, DtoConverter dtoConverter) {
         this.conversionService = conversionService;
         this.bookingRepository = bookingRepository;
         this.workoutRepository = workoutRepository;
         this.authInfo = authInfo;
-        this.workoutService = workoutService;
+        this.dtoConverter = dtoConverter;
     }
 
 
@@ -47,7 +48,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> fullBookings = bookingRepository.findAllByCustomerUsernameAndCanceledFalse((authInfo.getAuthUsername()));
         List<BookingDTO> bookingDTOs = new ArrayList<>();
         for (Booking booking : fullBookings) {
-            BookingDTO dto = makeBookingDTO(booking);
+            BookingDTO dto = dtoConverter.makeBookingDTO(booking);
             bookingDTOs.add(dto);
         }
         F_LOG.info("{} retrieved all their bookings.", authInfo.getRole());
@@ -123,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
         workout.getBookings().add(savedBooking);
         workoutRepository.save(workout);
         F_LOG.info("{} made a booking, with id {}, for workout with id {}.", role, savedBooking.getId(), workout.getId());
-        return makeBookingDTO(savedBooking);
+        return dtoConverter.makeBookingDTO(savedBooking);
     }
 
     @Transactional
@@ -171,7 +172,7 @@ public class BookingServiceImpl implements BookingService {
         booking.getWorkout().setFreeSpots(booking.getWorkout().getFreeSpots() + 1);
         F_LOG.info("{} canceled booking with id {} for workout {}.", role, booking.getId(), booking.getWorkout().getId());
         bookingRepository.save(booking);
-        return makeBookingDTO(booking);
+        return dtoConverter.makeBookingDTO(booking);
     }
 
     @Override
@@ -179,7 +180,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> fullBookings = bookingRepository.findByCanceledTrue();
         List<BookingDTO> bookingDTOs = new ArrayList<>();
         for (Booking booking : fullBookings) {
-            BookingDTO dto = makeBookingDTO(booking);
+            BookingDTO dto = dtoConverter.makeBookingDTO(booking);
             bookingDTOs.add(dto);
         }
         F_LOG.info("{} retrieved all canceled bookings.", authInfo.getRole());
@@ -191,7 +192,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> fullBookings = bookingRepository.findByCanceledFalseAndWorkout_DateTimeGreaterThanEqual(LocalDateTime.now());
         List<BookingDTO> bookingDTOs = new ArrayList<>();
         for (Booking booking : fullBookings) {
-            BookingDTO dto = makeBookingDTO(booking);
+            BookingDTO dto = dtoConverter.makeBookingDTO(booking);
             bookingDTOs.add(dto);
         }
         F_LOG.info("{} retrieved all upcoming bookings.", authInfo.getRole());
@@ -203,23 +204,11 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> fullBookings = bookingRepository.findByCanceledFalseAndWorkout_DateTimeBefore(LocalDateTime.now());
         List<BookingDTO> bookingDTOs = new ArrayList<>();
         for (Booking booking : fullBookings) {
-            BookingDTO dto = makeBookingDTO(booking);
+            BookingDTO dto = dtoConverter.makeBookingDTO(booking);
             bookingDTOs.add(dto);
         }
         F_LOG.info("{} retrieved all previous bookings.", authInfo.getRole());
         return bookingDTOs;
-    }
-
-    public BookingDTO makeBookingDTO(Booking booking) {
-        BookingDTO dto = new BookingDTO();
-        dto.setId(booking.getId());
-        dto.setCustomerUsername(booking.getCustomerUsername());
-        dto.setCanceled(booking.isCanceled());
-        dto.setTotalPriceSek(booking.getTotalPriceSek());
-        dto.setTotalPriceEuro(booking.getTotalPriceEuro());
-        dto.setBookingDate(booking.getBookingDate());
-        dto.setWorkoutDTO(workoutService.makeWorkoutDTO(booking.getWorkout()));
-        return dto;
     }
 
 }

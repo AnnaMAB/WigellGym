@@ -5,6 +5,7 @@ import org.example.wigellgym.dto.InstructorDTO;
 import org.example.wigellgym.dto.InstructorView;
 import org.example.wigellgym.entities.Instructor;
 import org.example.wigellgym.entities.Speciality;
+import org.example.wigellgym.mapper.DtoConverter;
 import org.example.wigellgym.repositories.InstructorRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,12 +35,15 @@ class InstructorServiceImplTest {
 
     private List<Instructor> instructors = new ArrayList<>();
 
+    private DtoConverter dtoConverter = new DtoConverter();
+
     @InjectMocks
     private InstructorServiceImpl instructorService;
 
 
     @BeforeEach
     void setUp() {
+        instructorService = new InstructorServiceImpl(instructorRepositoryMock, authInfoMock, dtoConverter);
         Instructor kalle = new Instructor("Kalle", "är en kanin");
         kalle.setId(1);
         Speciality hoppning = new Speciality();
@@ -81,6 +85,7 @@ class InstructorServiceImplTest {
         // Arrange
         when(authInfoMock.getRole()).thenReturn("USER");
         when(instructorRepositoryMock.findAll()).thenReturn(instructors);
+
         // Act
         List<InstructorView> result = instructorService.getInstructors();
         // Assert

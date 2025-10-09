@@ -9,6 +9,7 @@ import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Instructor;
 import org.example.wigellgym.entities.Speciality;
 import org.example.wigellgym.entities.Workout;
+import org.example.wigellgym.mapper.DtoConverter;
 import org.example.wigellgym.repositories.InstructorRepository;
 import org.example.wigellgym.repositories.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,12 @@ public class WorkoutServiceImpl implements WorkoutService {
     private final InstructorRepository instructorRepository;
     private static final Logger F_LOG = LogManager.getLogger("functionality");
     private final AuthInfo authInfo;
-    private final InstructorServiceImpl instructorService;
 
     @Autowired
-    public WorkoutServiceImpl(WorkoutRepository workoutRepository, InstructorRepository instructorRepository, AuthInfo authInfo, InstructorServiceImpl instructorService) {
+    public WorkoutServiceImpl(WorkoutRepository workoutRepository, InstructorRepository instructorRepository, AuthInfo authInfo) {
         this.workoutRepository = workoutRepository;
         this.instructorRepository = instructorRepository;
         this.authInfo = authInfo;
-        this.instructorService = instructorService;
     }
 
     @Override
@@ -392,21 +391,6 @@ public class WorkoutServiceImpl implements WorkoutService {
             }
         }
         return toReturn;
-    }
-
-    public WorkoutDTO makeWorkoutDTO(Workout workout) {
-        WorkoutDTO dto = new WorkoutDTO();
-        dto.setId(workout.getId());
-        dto.setName(workout.getName());
-        dto.setTypeOfWorkout(workout.getTypeOfWorkout());
-        dto.setLocation(workout.getLocation());
-        dto.setInstructorUserDTO(instructorService.makeInstructorDTO(workout.getInstructor()));
-        dto.setMaxParticipants(workout.getMaxParticipants());
-        dto.setDateTime(workout.getDateTime());
-        dto.setEndTime(workout.getEndTime());
-        dto.setCanceled(workout.isCanceled());
-
-        return dto;
     }
 
 }
