@@ -344,7 +344,6 @@ public class WorkoutServiceImpl implements WorkoutService {
             F_LOG.info("{} tried to canceled a workout with id: {}, but it was already canceled.", authInfo.getRole(), workout.getId());
             return String.format("Workout with Id: %s is already canceled.", workout.getId());
         }
-
         workout.getBookings().forEach(booking -> booking.setCanceled(true));
         workout.setMaxParticipants(0);
         workout.setFreeSpots(0);
