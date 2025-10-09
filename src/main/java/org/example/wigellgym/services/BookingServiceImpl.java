@@ -72,6 +72,13 @@ public class BookingServiceImpl implements BookingService {
                     String.format("No workout exists with id: %d.", workoutToBook.getId())
             );
         });
+        if (workout.isCanceled()) {
+            F_LOG.warn("{} tried to book a workout with id {} that is canceled.", role, workoutToBook.getId());
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "You can't book a canceled workout."
+            );
+        }
         boolean alreadyBooked = bookingRepository.existsByWorkoutAndCustomerUsernameAndCanceledFalse(workout, authInfo.getAuthUsername());
         if (alreadyBooked) {
             F_LOG.warn("{} tried to book a workout that they already have a booking for.", role);
@@ -161,6 +168,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setCanceled(true);
         booking.setTotalPriceEuro(0.0);
         booking.setTotalPriceSek(0.0);
+        booking.getWorkout().setFreeSpots(booking.getWorkout().getFreeSpots() + 1);
         F_LOG.info("{} canceled booking with id {} for workout {}.", role, booking.getId(), booking.getWorkout().getId());
         bookingRepository.save(booking);
         return makeBookingDTO(booking);

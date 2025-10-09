@@ -346,7 +346,8 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
 
         workout.getBookings().forEach(booking -> booking.setCanceled(true));
-
+        workout.setMaxParticipants(0);
+        workout.setFreeSpots(0);
         workout.setCanceled(true);
         workoutRepository.save(workout);
         F_LOG.info("{} canceled workout with id: {}, and its associated bookings.", authInfo.getRole(), workout.getId());
