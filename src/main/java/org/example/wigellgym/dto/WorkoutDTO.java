@@ -56,11 +56,11 @@ public class WorkoutDTO {
                 this.location = location;
         }
 
-        public InstructorDTO getInstructorUserDTO() {
+        public InstructorDTO getInstructorDTO() {
                 return instructorDTO;
         }
 
-        public void setInstructorUserDTO(InstructorDTO instructorDTO) {
+        public void setInstructorDTO(InstructorDTO instructorDTO) {
                 this.instructorDTO = instructorDTO;
         }
 
