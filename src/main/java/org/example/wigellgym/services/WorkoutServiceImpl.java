@@ -9,7 +9,6 @@ import org.example.wigellgym.entities.Booking;
 import org.example.wigellgym.entities.Instructor;
 import org.example.wigellgym.entities.Speciality;
 import org.example.wigellgym.entities.Workout;
-import org.example.wigellgym.mapper.DtoConverter;
 import org.example.wigellgym.repositories.InstructorRepository;
 import org.example.wigellgym.repositories.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,7 +13,6 @@ import org.example.wigellgym.repositories.BookingRepository;
 import org.example.wigellgym.repositories.WorkoutRepository;
 import org.example.wigellgym.services.BookingServiceImpl;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -117,10 +115,7 @@ class CustomerControllerBookingServiceImplTest {
                 .andExpect(jsonPath("$.canceled").value(false))
                 .andExpect(jsonPath("$.workoutDTO.id").value(1))
                 .andExpect(jsonPath("$.workoutDTO.dateTime").value("2095-10-27 17:30"))
-
-                .andExpect(jsonPath("$.workoutDTO.instructorDTO.name").value("Xero"))
-
-        ;
+                .andExpect(jsonPath("$.workoutDTO.instructorDTO.name").value("Xero"));
         verify(bookingRepositoryMock, times(1)).save(any(Booking.class));
         verify(workoutRepositoryMock, times(1)).save(any(Workout.class));
     }
@@ -259,6 +254,5 @@ class CustomerControllerBookingServiceImplTest {
         verify(bookingRepositoryMock, times(0)).save(any(Booking.class));
         verify(workoutRepositoryMock, times(0)).save(any(Workout.class));
     }
-
 
 }
