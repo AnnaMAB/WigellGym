@@ -210,7 +210,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             Instructor instructor = instructorRepository.findById(newWorkout.getInstructorDTO().getId())
                     .orElseThrow(() -> {
                         F_LOG.warn("{} tried to update a workout with a non-existing instructor (id: {}).", role,
-                                newWorkout.getInstructorDTO());
+                                newWorkout.getInstructorDTO().getId());
                         return new ResponseStatusException(
                                 HttpStatus.NOT_FOUND,
                                 "Instructor not found."
