@@ -287,7 +287,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             }
             cancelWorkout(workoutToUpdate);
             workoutToUpdate.setCanceled(newWorkout.getCanceled());
-            parts.add("and canceled it.");
+            parts.add("and canceled it");
         }
         if (parts.isEmpty()){
             F_LOG.warn("{} tried to update workout {} but no fields were changed.", role, workoutToUpdate.getId());
@@ -298,7 +298,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         checkAvailability(workoutToUpdate);
         String updated = String.join(", ", parts);
-        F_LOG.info("{} updated workout {} in the following fields: {}.", role, workoutToUpdate, updated);
+        F_LOG.info("{} updated workout {} in the following fields: {}.", role, workoutToUpdate.getId(), updated);
         return workoutRepository.save(workoutToUpdate);
     }
 
