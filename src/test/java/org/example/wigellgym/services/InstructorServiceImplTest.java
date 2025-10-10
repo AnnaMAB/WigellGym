@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -33,9 +34,9 @@ class InstructorServiceImplTest {
     @Mock
     private AuthInfo authInfoMock;
 
-    private List<Instructor> instructors = new ArrayList<>();
+    private final List<Instructor> instructors = new ArrayList<>();
 
-    private DtoConverter dtoConverter = new DtoConverter();
+    private final DtoConverter dtoConverter = new DtoConverter();
 
     @InjectMocks
     private InstructorServiceImpl instructorService;
@@ -93,14 +94,13 @@ class InstructorServiceImplTest {
 
         for (int i = 0; i < result.size(); i++) {
             InstructorView view = result.get(i);
-            assertTrue(view instanceof InstructorDTO);
+            assertThat(view).isInstanceOf(InstructorDTO.class);
 
             InstructorDTO dto = (InstructorDTO) view;
-            Instructor instructor = instructors.get(i);
 
-            assertEquals(instructor.getId(), dto.getId());
-            assertEquals(instructor.getName(), dto.getName());
-            assertEquals(instructor.getSpeciality(), dto.getSpeciality());
+            assertEquals(instructors.get(i).getId(), dto.getId());
+            assertEquals(instructors.get(i).getName(), dto.getName());
+            assertEquals(instructors.get(i).getSpeciality(), dto.getSpeciality());
         }
         verify(instructorRepositoryMock, times(1)).findAll();
     }
@@ -111,11 +111,14 @@ class InstructorServiceImplTest {
         Instructor skalman = new Instructor();
         skalman.setName("Skalman");
         skalman.setSecretInfo("är klok");
+
         Speciality cardio = new Speciality();
         cardio.setType("Cardio");
         cardio.setCertificateLevel(1);
+
         skalman.getSpeciality().add(cardio);
-        when(instructorRepositoryMock.save(skalman)).thenReturn(skalman);
+
+        when(instructorRepositoryMock.save(any(Instructor.class))).thenAnswer(invocation -> invocation.getArgument(0));
         // Act
         Instructor result = instructorService.addInstructor(skalman);
         // Assert

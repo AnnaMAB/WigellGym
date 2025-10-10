@@ -2,8 +2,6 @@ package org.example.wigellgym.controller;
 
 import org.example.wigellgym.dto.BookingDTO;
 import org.example.wigellgym.dto.WorkoutDTO;
-import org.example.wigellgym.entities.Booking;
-import org.example.wigellgym.entities.Workout;
 import org.example.wigellgym.services.BookingServiceImpl;
 import org.example.wigellgym.services.WorkoutServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

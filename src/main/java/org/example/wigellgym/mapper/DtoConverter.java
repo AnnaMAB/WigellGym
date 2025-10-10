@@ -1,6 +1,5 @@
 package org.example.wigellgym.mapper;
 
-
 import org.example.wigellgym.dto.BookingDTO;
 import org.example.wigellgym.dto.InstructorDTO;
 import org.example.wigellgym.dto.WorkoutDTO;

@@ -22,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -93,7 +92,7 @@ class CustomerControllerBookingServiceImplTest {
 
 
     @Test
-    void bookWorkout_ShouldAddBookingForWorkout () throws Exception {
+    void bookWorkout_ShouldAddBookingForWorkoutAndReturnDTO () throws Exception {
         //Arrange
         when(workoutRepositoryMock.findById(workoutDTO.getId())).thenReturn(Optional.of(workout));
         when(bookingRepositoryMock.existsByWorkoutAndCustomerUsernameAndCanceledFalse(any(), any()))
