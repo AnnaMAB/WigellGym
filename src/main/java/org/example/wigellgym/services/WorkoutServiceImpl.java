@@ -331,24 +331,32 @@ public class WorkoutServiceImpl implements WorkoutService {
     @Transactional
     @Override
     public String cancelWorkout(Workout workout) {
+        String role = authInfo.getRole();
         if (workout.getId() == null) {
-            F_LOG.warn("{} tried to cancel a workout without an id.", authInfo.getRole());
+            F_LOG.warn("{} tried to cancel a workout without an id.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Workout id must be provided for cancellation"
             );
         }
-        if (workout.isCanceled()){
-            F_LOG.info("{} tried to canceled a workout with id: {}, but it was already canceled.", authInfo.getRole(), workout.getId());
-            return String.format("Workout with Id: %s is already canceled.", workout.getId());
+        Workout workoutToCancel= workoutRepository.findById(workout.getId()).orElseThrow(() -> {
+            F_LOG.warn("{} tried to cancel a workout with id {} that doesn't exist.", role, workout.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No workout exists in database with id: %d.", workout.getId())
+            );
+        });
+        if (workoutToCancel.isCanceled()){
+            F_LOG.info("{} tried to canceled a workout with id: {}, but it was already canceled.",role, workoutToCancel.getId());
+            return String.format("Workout with Id: %s is already canceled.", workoutToCancel.getId());
         }
-        workout.getBookings().forEach(booking -> booking.setCanceled(true));
-        workout.setMaxParticipants(0);
-        workout.setFreeSpots(0);
-        workout.setCanceled(true);
-        workoutRepository.save(workout);
-        F_LOG.info("{} canceled workout with id: {}, and its associated bookings.", authInfo.getRole(), workout.getId());
-        return String.format("Workout with Id: %s, and its associated bookings, were canceled.", workout.getId());
+        workoutToCancel.getBookings().forEach(booking -> booking.setCanceled(true));
+        workoutToCancel.setMaxParticipants(0);
+        workoutToCancel.setFreeSpots(0);
+        workoutToCancel.setCanceled(true);
+        workoutRepository.save(workoutToCancel);
+        F_LOG.info("{} canceled workout with id: {}, and its associated bookings.", role, workoutToCancel.getId());
+        return String.format("Workout with Id: %s, and its associated bookings, were canceled.", workoutToCancel.getId());
     }
 
 
